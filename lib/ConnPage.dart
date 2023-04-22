@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/ClientMenu.dart';
 import 'package:wifi_direct_json/HostMenu.dart';
 import 'HomePage.dart';
-import 'SuperSimon.dart';
 import 'GameManager.dart';
 
 class ConnPage extends StatefulWidget {

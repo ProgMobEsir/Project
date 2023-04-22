@@ -27,7 +27,6 @@ class SuperSimonState extends State<SuperSimon>
 
   @override
   void onRecieve(req) {
-    // TODO: implement onRecieve
     super.onRecieve(req);
 
     data = req;
@@ -35,7 +34,6 @@ class SuperSimonState extends State<SuperSimon>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     GameManager.instance!.subscribe(this);
     print("subscribed");
@@ -43,7 +41,6 @@ class SuperSimonState extends State<SuperSimon>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     GameManager.instance!.unsubscribe(this);
     print("unsubscribed");

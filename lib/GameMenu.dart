@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/HostMenu.dart';
 import 'package:wifi_direct_json/SuperSimon.dart';
-import 'ConnPage.dart';
+
 import 'GameManager.dart';
 
 class GameMenu extends StatefulWidget {

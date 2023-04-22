@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/HomePage.dart';
-import 'ConnPage.dart';
+
 
 void main() {
   runApp(const MyApp());
