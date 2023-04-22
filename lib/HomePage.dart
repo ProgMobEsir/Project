@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/GameMenu.dart';
 import 'ConnPage.dart';
+import 'GameMods.dart';
+import 'GameManager.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,6 +31,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             //et la un bouton de play
             ElevatedButton(
               onPressed: () {
+                GameManager.instance!.gameMode = GameMode.Solo;
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GameMenu(),
+                  ),
+                );
+              },
+              child: const Text('Play Solo'),
+            ),
+            ElevatedButton(
+              onPressed: () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -35,7 +50,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   ),
                 );
               },
-              child: const Text('Play'),
+              child: const Text('Play multiplayer'),
             ),
           ],
         ),

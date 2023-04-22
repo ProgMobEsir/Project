@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 import 'Reciever.dart';
+import 'GameMods.dart';
 
 class GameManager {
+  GameMode gameMode = GameMode.Solo;
   List<DiscoveredPeers> peers = [];
   WifiP2PInfo? wifiP2PInfo;
   StreamSubscription<WifiP2PInfo>? _streamWifiInfo;

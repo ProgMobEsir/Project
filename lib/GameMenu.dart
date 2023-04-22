@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/HomePage.dart';
 import 'package:wifi_direct_json/HostMenu.dart';
 import 'package:wifi_direct_json/SuperSimon.dart';
 
@@ -20,12 +21,12 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
         //add a button to the home page :
         actions: [
           IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.cancel),
             onPressed: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const HostMenu(),
+                  builder: (context) => const HomePage(),
                 ),
               );
             },
