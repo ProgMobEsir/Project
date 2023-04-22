@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wifi_direct_json/HomePage.dart';
-import 'package:wifi_direct_json/HostMenu.dart';
-import 'package:wifi_direct_json/SuperSimon.dart';
+import 'HomePage.dart';
+import 'package:wifi_direct_json/Games/SuperSimon.dart';
 
-import 'GameManager.dart';
+import '/Utils/GameManager.dart';
 
 class GameMenu extends StatefulWidget {
   const GameMenu({super.key});

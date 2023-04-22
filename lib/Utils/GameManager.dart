@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
-import 'Reciever.dart';
-import 'GameMods.dart';
+import '/Utils/Reciever.dart';
+import '/Utils/GameMods.dart';
 
 class GameManager {
   GameMode gameMode = GameMode.Solo;
@@ -69,14 +69,14 @@ class GameManager {
         ? "enabled"
         : await _flutterP2pConnectionPlugin.enableWifiServices();
 
-    await _flutterP2pConnectionPlugin?.removeGroup();
+    await _flutterP2pConnectionPlugin.removeGroup();
 
-    bool? discovering = await _flutterP2pConnectionPlugin!.discover();
+    bool? discovering = await _flutterP2pConnectionPlugin.discover();
   }
 
   Future startSocket() async {
     if (wifiP2PInfo != null) {
-      bool started = await _flutterP2pConnectionPlugin!.startSocket(
+      bool started = await _flutterP2pConnectionPlugin.startSocket(
         groupOwnerAddress: wifiP2PInfo!.groupOwnerAddress,
         downloadPath: "/storage/emulated/0/Download/",
         maxConcurrentDownloads: 2,

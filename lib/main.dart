@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wifi_direct_json/HomePage.dart';
-
+import '/Menus/HomePage.dart';
 
 void main() {
   runApp(const MyApp());

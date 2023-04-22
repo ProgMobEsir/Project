@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wifi_direct_json/GameMenu.dart';
+import 'GameMenu.dart';
 import 'ConnPage.dart';
 
-import 'GameManager.dart';
+import '/Utils/GameManager.dart';
 
 class HostMenu extends StatefulWidget {
   const HostMenu({super.key});

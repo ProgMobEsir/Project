@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:wifi_direct_json/ConnPage.dart';
-import 'package:wifi_direct_json/GameManager.dart';
-import "Reciever.dart";
+import '/Menus/ConnPage.dart';
+import '/Utils/Reciever.dart';
+import '/Utils/GameManager.dart';
 
 enum Mode { write, guess, wait }
 

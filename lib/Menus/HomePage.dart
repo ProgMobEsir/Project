@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wifi_direct_json/GameMenu.dart';
+import 'GameMenu.dart';
 import 'ConnPage.dart';
-import 'GameMods.dart';
-import 'GameManager.dart';
+import '/Utils/GameMods.dart';
+import '/Utils/GameManager.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

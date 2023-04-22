@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'ConnPage.dart';
-import 'GameManager.dart';
+import '/Utils/GameManager.dart';
 
 class ClientMenu extends StatefulWidget {
   const ClientMenu({super.key});
