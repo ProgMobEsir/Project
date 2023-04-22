@@ -1,7 +1,3 @@
-import 'dart:io';
-import 'package:filesystem_picker/filesystem_picker.dart';
-import 'dart:async';
-import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
 import 'SuperSimon.dart';

@@ -1,10 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 import 'package:wifi_direct_json/ConnPage.dart';
 import 'package:wifi_direct_json/GameManager.dart';
-import 'HomePage.dart';
 import "Reciever.dart";
 
 enum Mode { write, guess, wait }
@@ -243,11 +240,8 @@ class SuperSimonState extends State<SuperSimon>
   void sendSequence() {
     //send the sequence to the other device :
     print("sending string");
-    print(GameManager.instance!.flutterP2pConnectionPlugin
-        .fetchPeers()
-        .toString());
 
-    GameManager.instance!.sendMessage("youpi");
+    GameManager.instance!.sendMessage(sequence.toString());
   }
 
   void loose() {
