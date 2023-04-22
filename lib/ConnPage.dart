@@ -89,7 +89,9 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
                         "connected: ${GameManager.instance!.wifiP2PInfo?.isConnected}, isGroupOwner: ${GameManager.instance!.wifiP2PInfo?.isGroupOwner}, groupFormed: ${GameManager.instance!.wifiP2PInfo?.groupFormed}, groupOwnerAddress: ${GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}, clients: ${GameManager.instance!.wifiP2PInfo?.clients}")
                     : const SizedBox.shrink(),
                 const SizedBox(height: 10),
-                const Text("PEERS:"),
+                Padding(padding: const EdgeInsets.only(top: 20)),
+                const Text("avialable devices:"),
+                Divider(),
                 SizedBox(
                   height: 100,
                   width: MediaQuery.of(context).size.width,
@@ -131,10 +133,10 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
                                   TextButton(
                                     onPressed: () async {
                                       Navigator.of(context).pop();
-                                      bool? bo =
-                                          await GameManager.instance?.flutterP2pConnectionPlugin
-                                              .connect(GameManager.instance!
-                                                  .peers[index].deviceAddress);
+                                      bool? bo = await GameManager
+                                          .instance?.flutterP2pConnectionPlugin
+                                          .connect(GameManager.instance!
+                                              .peers[index].deviceAddress);
                                       //on start le socker automatoque
                                       GameManager.instance!.startSocket();
                                       snack("connected: $bo");
@@ -171,49 +173,18 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
-                /*ElevatedButton(
-              onPressed: () async {
-                snack((await _flutterP2pConnectionPlugin.checkLocationEnabled())
-                    ? "enabled"
-                    : "diabled");
-              },
-              child: const Text("check location enabled"),
-            ),*/
-                /*ElevatedButton(
-              onPressed: () async {
-                snack((await _flutterP2pConnectionPlugin.checkWifiEnabled())
-                    ? "enabled"
-                    : "diabled");
-              },
-              child: const Text("check wifi enabled"),
-            ),*/
-                /*ElevatedButton(
-              onPressed: () async {
-                print(
-                    await _flutterP2pConnectionPlugin.askLocationPermission());
-              },
-              child: const Text("ask location permission"),
-            ),*/
-                /*ElevatedButton(
-              onPressed: () async {
-                print(await _flutterP2pConnectionPlugin.askStoragePermission());
-              },
-              child: const Text("ask storage permission"),
-            ),*/
-                /*ElevatedButton(
-              onPressed: () async {
-                print(
-                    await _flutterP2pConnectionPlugin.enableLocationServices());// 1
-              },
-              child: const Text("enable location")
-            ),*/
-                /*ElevatedButton(
-              onPressed: () async {
-                print(await _flutterP2pConnectionPlugin.enableWifiServices());// 2
-              },
-              child: const Text("enable wifi"),
-            ),*/
-
+                Padding(padding: const EdgeInsets.only(top: 20)),
+                Text("Games"),
+                Divider(),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.green),
+                  ),
+                  onPressed: () async {
+                    GameManager.instance!.sendMessage("START GAME 1 2 6");
+                  },
+                  child: const Text("START GAME"), //automatic in games
+                ),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pushReplacement(
@@ -223,14 +194,18 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
                       ),
                     );
                   },
-                  child: const Text("Try Game"),
+                  child: const Text("Game Simon"),
                 ),
+                Padding(padding: const EdgeInsets.only(top: 20)),
+                Text("Connection stuff"),
+                Divider(),
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green),
                   ),
                   onPressed: () async {
-                    bool? created = await GameManager.instance?.flutterP2pConnectionPlugin
+                    bool? created = await GameManager
+                        .instance?.flutterP2pConnectionPlugin
                         .createGroup(); // button
 
                     snack("created group: $created");
@@ -242,16 +217,18 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
                     backgroundColor: MaterialStateProperty.all(Colors.red),
                   ),
                   onPressed: () async {
-                    bool? removed =
-                        await GameManager.instance?.flutterP2pConnectionPlugin.removeGroup(); //3
+                    bool? removed = await GameManager
+                        .instance?.flutterP2pConnectionPlugin
+                        .removeGroup(); //3
                     snack("removed group: $removed");
                   },
                   child: const Text("Leave Group"),
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    var info =
-                        await GameManager.instance?.flutterP2pConnectionPlugin.groupInfo(); //button
+                    var info = await GameManager
+                        .instance?.flutterP2pConnectionPlugin
+                        .groupInfo(); //button
                     showDialog(
                       context: context,
                       builder: (context) => Center(
@@ -290,7 +267,8 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
             ),*/
                 ElevatedButton(
                   onPressed: () async {
-                    bool? discovering = await GameManager.instance?.flutterP2pConnectionPlugin
+                    bool? discovering = await GameManager
+                        .instance?.flutterP2pConnectionPlugin
                         .discover(); // button 4
                     snack("discovering $discovering");
                   },
@@ -298,8 +276,9 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    bool? stopped =
-                        await GameManager.instance?.flutterP2pConnectionPlugin.stopDiscovery();
+                    bool? stopped = await GameManager
+                        .instance?.flutterP2pConnectionPlugin
+                        .stopDiscovery();
                     snack("stopped discovering $stopped");
                   },
                   child: const Text("stop discovery"),
@@ -321,40 +300,6 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
                     GameManager.instance!.closeSocketConnection();
                   },
                   child: const Text("close socket"),
-                ),
-                TextField(
-                  controller: msgText,
-                  decoration: const InputDecoration(
-                    hintText: "message",
-                  ),
-                ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green),
-                  ),
-                  onPressed: () async {
-                    GameManager.instance!.sendMessage("START GAME 1 2 6");
-                  },
-                  child: const Text("START GAME"), //automatic in games
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    GameManager.instance!.sendMessage(msgText.text);
-                  },
-                  child: const Text("SEND CHAT"), //automatic in games
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    //GameManager.instance!.sendFile(true);
-                  },
-                  child:
-                      const Text("send File from phone"), //automatic from phone
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    //GameManager.instance!.sendFile(false);
-                  },
-                  child: const Text("send File"),
                 ),
               ],
             ),

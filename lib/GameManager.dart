@@ -123,4 +123,5 @@ class GameManager {
   Future sendMessage(String s) async {
     _flutterP2pConnectionPlugin.sendStringToSocket(s);
   }
+  
 }
