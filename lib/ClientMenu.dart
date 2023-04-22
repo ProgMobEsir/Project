@@ -36,6 +36,18 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(
+              "IP: ${GameManager.instance!.wifiP2PInfo == null ? "null" : GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}",
+              textAlign: TextAlign.center,
+            ),
+            GameManager.instance!.wifiP2PInfo != null
+                ? Text(
+                    "connected: ${GameManager.instance!.wifiP2PInfo?.isConnected}, isGroupOwner: ${GameManager.instance!.wifiP2PInfo?.isGroupOwner}, groupFormed: ${GameManager.instance!.wifiP2PInfo?.groupFormed}, groupOwnerAddress: ${GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}, clients: ${GameManager.instance!.wifiP2PInfo?.clients}",
+                    textAlign: TextAlign.center,
+                  )
+                : const SizedBox.shrink(),
+            const SizedBox(height: 10),
+
             const Text(
               'Join a room and wait for the host to start the game !',
               textAlign: TextAlign.center,

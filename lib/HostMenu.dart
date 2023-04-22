@@ -37,6 +37,17 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(
+              "IP: ${GameManager.instance!.wifiP2PInfo == null ? "null" : GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}",
+              textAlign: TextAlign.center,
+            ),
+            GameManager.instance!.wifiP2PInfo != null
+                ? Text(
+                    "connected: ${GameManager.instance!.wifiP2PInfo?.isConnected}, isGroupOwner: ${GameManager.instance!.wifiP2PInfo?.isGroupOwner}, groupFormed: ${GameManager.instance!.wifiP2PInfo?.groupFormed}, groupOwnerAddress: ${GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}, clients: ${GameManager.instance!.wifiP2PInfo?.clients}",
+                    textAlign: TextAlign.center,
+                  )
+                : const SizedBox.shrink(),
+            const SizedBox(height: 10),
             const Text(
               'Create a room for other to join !',
               //generate a line to add padding to the text
@@ -45,7 +56,7 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
               ),
             ),
             //la on met du padding
-            const Padding(padding: EdgeInsets.all(40)),
+            const Padding(padding: EdgeInsets.all(20)),
             //et la un bouton de play
             ElevatedButton(
               onPressed: () {
