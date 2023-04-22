@@ -3,6 +3,11 @@ import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_sensors/flutter_sensors.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -10,7 +15,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -351,14 +355,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 
                 snack("created group: $created");
               },
-              child: const Text("create game room"),
+              child: const Text("create Game Room"),
             ),
             ElevatedButton(
               onPressed: () async {
                 bool? removed = await _flutterP2pConnectionPlugin.removeGroup(); //3
                 snack("removed group: $removed");
               },
-              child: const Text("Leave Group"),
+              child: const Text("Leave Game Room"),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -462,7 +466,239 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               },
               child: const Text("send File"),
             ),
+            ElevatedButton(
+              onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const accel();
+                }));
+              },
+              child: const Text('Next'),
+            )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class SecondPage extends StatelessWidget {
+  const SecondPage({Key? key, required this.title}) : super(key: key);
+  final String title;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: Center(
+        child: TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Go Back'),
+        ),
+      ),
+    );
+  }
+
+}
+
+
+
+
+class accel extends State<StatefulBuilder> {
+  bool _accelAvailable = false;
+  bool _gyroAvailable = false;
+  List<double> _accelData = List.filled(3, 0.0);
+  List<double> _gyroData = List.filled(3, 0.0);
+  StreamSubscription? _accelSubscription;
+  StreamSubscription? _gyroSubscription;
+
+  @override
+  void initState() {
+    _checkAccelerometerStatus();
+    _checkGyroscopeStatus();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _stopAccelerometer();
+    _stopGyroscope();
+    super.dispose();
+  }
+
+  void _checkAccelerometerStatus() async {
+    await SensorManager()
+        .isSensorAvailable(Sensors.ACCELEROMETER)
+        .then((result) {
+      setState(() {
+        _accelAvailable = result;
+      });
+    });
+  }
+
+  Future<void> _startAccelerometer() async {
+    if (_accelSubscription != null) return;
+    if (_accelAvailable) {
+      final stream = await SensorManager().sensorUpdates(
+        sensorId: Sensors.ACCELEROMETER,
+        interval: Sensors.SENSOR_DELAY_FASTEST,
+      );
+      _accelSubscription = stream.listen((sensorEvent) {
+        setState(() {
+          _accelData = sensorEvent.data;
+        });
+      });
+    }
+  }
+
+  void _stopAccelerometer() {
+    if (_accelSubscription == null) return;
+    _accelSubscription?.cancel();
+    _accelSubscription = null;
+  }
+
+  void _checkGyroscopeStatus() async {
+    await SensorManager().isSensorAvailable(Sensors.GYROSCOPE).then((result) {
+      setState(() {
+        _gyroAvailable = result;
+      });
+    });
+  }
+
+  Future<void> _startGyroscope() async {
+    if (_gyroSubscription != null) return;
+    if (_gyroAvailable) {
+      final stream =
+          await SensorManager().sensorUpdates(sensorId: Sensors.GYROSCOPE);
+      _gyroSubscription = stream.listen((sensorEvent) {
+        setState(() {
+          _gyroData = sensorEvent.data;
+        });
+      });
+    }
+  }
+
+  void _stopGyroscope() {
+    if (_gyroSubscription == null) return;
+    _gyroSubscription?.cancel();
+    _gyroSubscription = null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Flutter Sensors Example'),
+        ),
+        body: Container(
+          padding: EdgeInsets.all(16.0),
+          alignment: AlignmentDirectional.topCenter,
+          child: Column(
+            children: <Widget>[
+
+
+
+              Text(
+                "Accelerometer Test",
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                "Accelerometer Enabled: $_accelAvailable",
+                textAlign: TextAlign.center,
+              ),
+              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Text(
+                "[0](X) = ${_accelData[0]}",
+                textAlign: TextAlign.center,
+              ),
+              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Text(
+                "[1](Y) = ${_accelData[1]}",
+                textAlign: TextAlign.center,
+              ),
+              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Text(
+                "[2](Z) = ${_accelData[2]}",
+                textAlign: TextAlign.center,
+              ),
+              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Go Back'),
+                    ),
+
+                  MaterialButton(
+                    child: Text("Start"),
+                    color: Colors.green,
+                    onPressed:
+                        _accelAvailable ? () => _startAccelerometer() : null,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                  ),
+                  MaterialButton(
+                    child: Text("Stop"),
+                    color: Colors.red,
+                    onPressed:
+                        _accelAvailable ? () => _stopAccelerometer() : null,
+                  ),
+                ],
+              ),
+              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Text(
+                "Gyroscope Test",
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                "Gyroscope Enabled: $_gyroAvailable",
+                textAlign: TextAlign.center,
+              ),
+              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Text(
+                "[0](X) = ${_gyroData[0]}",
+                textAlign: TextAlign.center,
+              ),
+              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Text(
+                "[1](Y) = ${_gyroData[1]}",
+                textAlign: TextAlign.center,
+              ),
+              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Text(
+                "[2](Z) = ${_gyroData[2]}",
+                textAlign: TextAlign.center,
+              ),
+              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  MaterialButton(
+                    child: Text("Start"),
+                    color: Colors.green,
+                    onPressed: _gyroAvailable ? () => _startGyroscope() : null,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                  ),
+                  MaterialButton(
+                    child: Text("Stop"),
+                    color: Colors.red,
+                    onPressed: _gyroAvailable ? () => _stopGyroscope() : null,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
