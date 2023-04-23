@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/Games/DragGame.dart';
 import 'HomePage.dart';
 import 'package:wifi_direct_json/Games/SuperSimon.dart';
 
@@ -57,18 +58,29 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
             ),
             ElevatedButton(
               onPressed: () {
-
                 GameManager.instance!.sendMessage("GAME SIMON");
-                
+
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    
                     builder: (context) => const SuperSimon(),
                   ),
                 );
               },
               child: const Text("Game Simon"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                GameManager.instance!.sendMessage("GAME DRAG");
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DragGame(),
+                  ),
+                );
+              },
+              child: const Text("Game Drag"),
             ),
           ],
         ),

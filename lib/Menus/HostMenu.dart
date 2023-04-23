@@ -139,13 +139,13 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
               onPressed: () async {
                 GameManager.instance!.startSocket();
               },
-              child: const Text("open a socket"), // button 5
+              child: const Text("open the room"), // button 5
             ),
             ElevatedButton(
               onPressed: () async {
                 GameManager.instance!.closeSocketConnection();
               },
-              child: const Text("close socket"),
+              child: const Text("close the room"),
             ),
           ],
         ),
@@ -163,5 +163,4 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
       ),
     );
   }
-
 }

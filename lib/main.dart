@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/Games/DragGame.dart';
 import 'package:wifi_direct_json/Games/SuperSimon.dart';
 import '/Menus/HomePage.dart';
 import 'Menus/ClientMenu.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       "GAME_SIMON":(BuildContext context) =>SuperSimon(),
       "HOME":(BuildContext context) =>HomePage(),
       "CLIENT":(BuildContext context) => ClientMenu(),
+      "GAME_DRAG":(BuildContext context) => DragGame(),
 
   },
     );

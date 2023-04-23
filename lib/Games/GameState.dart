@@ -2,9 +2,8 @@ import 'package:flutter/cupertino.dart';
 import '/Utils/Reciever.dart';
 
 import '/Utils/GameManager.dart';
-import 'SuperSimon.dart';
 
-class GameState extends State<SuperSimon>
+class GameState<T extends StatefulWidget> extends State<T>
     with WidgetsBindingObserver, Reciever {
   String name = "game";
 

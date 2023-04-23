@@ -55,6 +55,15 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
                 fontSize: 20,
               ),
             ),
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.orange),
+              ),
+              onPressed: () async {
+                setState(() {});
+              },
+              child: const Text("Refresh list"),
+            ),
             Padding(padding: const EdgeInsets.all(10)),
             const Text("avialable devices:"),
             Divider(),
@@ -97,6 +106,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
                             actions: [
                               TextButton(
                                 onPressed: () async {
+                                  setState(() {});
                                   Navigator.of(context).pop();
                                   bool? bo = await GameManager
                                       .instance?.flutterP2pConnectionPlugin
@@ -145,6 +155,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
                 backgroundColor: MaterialStateProperty.all(Colors.red),
               ),
               onPressed: () async {
+                setState(() {});
                 bool? removed = await GameManager
                     .instance?.flutterP2pConnectionPlugin
                     .removeGroup(); //3
@@ -186,6 +197,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
             ),
             ElevatedButton(
               onPressed: () async {
+                setState(() {});
                 bool? discovering = await GameManager
                     .instance?.flutterP2pConnectionPlugin
                     .discover(); // button 4
@@ -195,6 +207,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
             ),
             ElevatedButton(
               onPressed: () async {
+                setState(() {});
                 bool? stopped = await GameManager
                     .instance?.flutterP2pConnectionPlugin
                     .stopDiscovery();
@@ -204,9 +217,10 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
             ),
             ElevatedButton(
               onPressed: () async {
+                setState(() {});
                 GameManager.instance!.connectToSocket();
               },
-              child: const Text("connect to socket"), // button 6
+              child: const Text("connect to the room"), // button 6
             ),
           ],
         ),

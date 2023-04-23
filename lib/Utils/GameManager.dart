@@ -42,15 +42,13 @@ class GameManager {
   }
 
   void onRecieve(req) {
-    
     print("Recieving string");
-    
+
     for (var sub in subscribers) {
       print("sending to ${sub.getName()}");
       sub.onRecieve(req);
     }
-    
-    
+
     parseRequest(req);
   }
 
@@ -62,6 +60,9 @@ class GameManager {
       if (command[1] == "SIMON") {
         print("starting simon");
         NavigationService.instance.navigateToReplacement("GAME_SIMON");
+      } else if (command[1] == "DRAG") {
+        print("starting simon");
+        NavigationService.instance.navigateToReplacement("GAME_DRAG");
       }
     }
   }

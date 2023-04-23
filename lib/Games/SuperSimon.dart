@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '/Menus/ConnPage.dart';
-
 import 'GameState.dart';
 
 enum Mode { write, guess, wait }
@@ -12,10 +11,10 @@ class SuperSimon extends StatefulWidget {
   State<SuperSimon> createState() => SuperSimonState();
 }
 
-class SuperSimonState extends GameState {
+class SuperSimonState extends GameState<SuperSimon> {
   var sequence = [];
   String data = "";
-  var guestPos = [];
+  var guestPos = [0, 0];
 
   @override
   void onRecieve(req) {
@@ -31,13 +30,15 @@ class SuperSimonState extends GameState {
           .split(" ");
     }
     if (req.toString().startsWith("POS")) {
-      guestPos = req
+      var tmp = req
           .toString()
           .replaceAll("POS[", "")
           .replaceAll("]", "")
           .replaceAll(",", "")
-          .split(" ");
-
+          .split(" ")
+          .cast();
+      guestPos[0] = int.parse(tmp[0]);
+      guestPos[1] = int.parse(tmp[1]);
       print(guestPos);
     }
   }
@@ -45,32 +46,34 @@ class SuperSimonState extends GameState {
   @override
   Widget build(BuildContext context) {
     //return the widget with a text displaying the number
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.amber,
-        //add a button to the home page :
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ConnPage(),
-                ),
-              );
-            },
-          ),
-        ],
-        title: const Text('Simon Game'),
-      ),
-      body: Center(
-        child: GestureDetector(
-          onVerticalDragDown: (DragDownDetails details) {
-            sendPosition(details.globalPosition.dx.toInt(),
-                details.globalPosition.dy.toInt());
-          },
-          //add four buttons numbered 1 to 4 :
+    return GestureDetector(
+      onVerticalDragUpdate: (DragUpdateDetails details) {
+        sendPosition(details.globalPosition.dx.toInt(),
+            details.globalPosition.dy.toInt());
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.amber,
+          //add a button to the home page :
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ConnPage(),
+                  ),
+                );
+              },
+            ),
+          ],
+          title: const Text('Simon Game'),
+        ),
+        body:
+
+            //add four buttons numbered 1 to 4 :
+            Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -95,7 +98,6 @@ class SuperSimonState extends GameState {
                 style: const TextStyle(fontSize: 20),
               ),
               Draggable(
-
                 child: Container(
                   width: 100.0,
                   height: 100.0,
@@ -103,7 +105,6 @@ class SuperSimonState extends GameState {
                 ),
                 // This will be displayed when the widget is being dragged
                 feedback: Container(
-                  
                   width: 100.0,
                   height: 100.0,
                   color: Colors.pink,
