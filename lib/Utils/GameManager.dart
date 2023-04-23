@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
+import '../navigation/NavigationService.dart';
 import '/Utils/Reciever.dart';
 import '/Utils/GameMods.dart';
 
@@ -41,11 +42,27 @@ class GameManager {
   }
 
   void onRecieve(req) {
-    print("Recieving something! string");
-
+    
+    print("Recieving string");
+    
     for (var sub in subscribers) {
       print("sending to ${sub.getName()}");
       sub.onRecieve(req);
+    }
+    
+    
+    parseRequest(req);
+  }
+
+  void parseRequest(String req) {
+    //set the request in a table
+    List<String> command = req.split(" ");
+    print(command);
+    if (command[0] == "GAME") {
+      if (command[1] == "SIMON") {
+        print("starting simon");
+        NavigationService.instance.navigateToReplacement("GAME_SIMON");
+      }
     }
   }
 

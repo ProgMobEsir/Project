@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/Games/SuperSimon.dart';
 import '/Menus/HomePage.dart';
+import 'Menus/ClientMenu.dart';
+import 'navigation/NavigationService.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -10,8 +15,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
+
+      navigatorKey: NavigationService.instance.navigationKey,
       home: HomePage(),
+      routes: {
+      "GAME_SIMON":(BuildContext context) =>SuperSimon(),
+      "HOME":(BuildContext context) =>HomePage(),
+      "CLIENT":(BuildContext context) => ClientMenu(),
+
+  },
     );
   }
 }

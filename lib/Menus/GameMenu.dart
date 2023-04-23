@@ -57,9 +57,13 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
             ),
             ElevatedButton(
               onPressed: () {
+
+                GameManager.instance!.sendMessage("GAME SIMON");
+                
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
+                    
                     builder: (context) => const SuperSimon(),
                   ),
                 );
