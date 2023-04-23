@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wifi_direct_json/Games/DragGame.dart';
+import 'package:wifi_direct_json/Games/DragGame/DragGame.dart';
 import 'HomePage.dart';
 import 'package:wifi_direct_json/Games/SuperSimon.dart';
 
