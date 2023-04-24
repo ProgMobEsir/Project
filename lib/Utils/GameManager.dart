@@ -17,7 +17,6 @@ class GameManager {
       _flutterP2pConnectionPlugin;
 
   static GameManager? _instance;
-  String name = "gameManager";
   //table of all the subscribers
   List<Reciever> subscribers = [];
 
@@ -37,10 +36,6 @@ class GameManager {
     subscribers.remove(game);
   }
 
-  String getName() {
-    return name;
-  }
-
   void onRecieve(req) {
     print("Recieving string");
 
@@ -55,7 +50,9 @@ class GameManager {
   void parseRequest(String req) {
     //set the request in a table
     List<String> command = req.split(" ");
+
     print(command);
+
     if (command[0] == "GAME") {
       if (command[1] == "SIMON") {
         print("starting simon");
@@ -106,7 +103,6 @@ class GameManager {
               "ID: ${transfer.id}, FILENAME: ${transfer.filename}, PATH: ${transfer.path}, COUNT: ${transfer.count}, TOTAL: ${transfer.total}, COMPLETED: ${transfer.completed}, FAILED: ${transfer.failed}, RECEIVING: ${transfer.receiving}");
         },
         receiveString: (req) async {
-          //TODO : GOOD
           print("Recieving from socket");
           GameManager.instance!.onRecieve(req);
         },

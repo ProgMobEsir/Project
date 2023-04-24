@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
 
       navigatorKey: NavigationService.instance.navigationKey,
       home: HomePage(),
+      
       routes: {
       "GAME_SIMON":(BuildContext context) =>SuperSimon(),
       "HOME":(BuildContext context) =>HomePage(),

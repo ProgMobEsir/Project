@@ -31,6 +31,7 @@ dependencies:
   filesystem_picker: ^3.1.0
   flutter:
     sdk: flutter
+  flutter_joystick: ^0.0.3
   flutter_p2p_connection: ^2.0.1
   flutter_sensors: ^1.0.1
 

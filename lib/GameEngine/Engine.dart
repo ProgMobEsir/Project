@@ -36,6 +36,7 @@ class MyPainter extends CustomPainter {
       }
       element.getRenderer().draw(canvas, paint);
     });
+    
     tmp.forEach((element) {
       gameEngine.list.remove(element);
     });

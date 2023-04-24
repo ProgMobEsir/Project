@@ -8,7 +8,6 @@ import '/Utils/GameManager.dart';
 
 class GameState<T extends StatefulWidget> extends State<T>
     with WidgetsBindingObserver, Reciever {
-  String name = "game";
   GameEngine engine = GameEngine();
 
   late Timer timer;
@@ -16,10 +15,11 @@ class GameState<T extends StatefulWidget> extends State<T>
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+    timer = Timer.periodic(Duration(milliseconds: 10), (timer) {
       Mupdate();
     });
     GameManager.instance!.subscribe(this);
+    
     print("subscribed");
   }
 
@@ -46,7 +46,7 @@ class GameState<T extends StatefulWidget> extends State<T>
   }
 
   void Mupdate() {
-    setState(() {});
+    if (mounted) setState(() {});
     update();
   }
 

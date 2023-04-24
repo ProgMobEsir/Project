@@ -6,7 +6,6 @@ import 'Rectangle.dart';
 import 'Circle.dart';
 
 class Renderer {
-
   GameObject? parent;
   Color color;
 
