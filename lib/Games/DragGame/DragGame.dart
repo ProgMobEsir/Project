@@ -4,7 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/Games/DragGame/Player.dart';
 import 'package:wifi_direct_json/Games/DragGame/food.dart';
 import 'package:wifi_direct_json/Menus/ConnPage.dart';
+import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
+import 'package:wifi_direct_json/Utils/Requests/WinRequest.dart';
+import 'package:wifi_direct_json/navigation/NavigationService.dart';
 import '../../GameEngine/shapes/Rectangle.dart';
+import '../../Utils/GameManager.dart';
+import '../../Utils/Requests/InstanciationRequest.dart';
+import '../../Utils/Requests/JsonRequest.dart';
 import '../GameState.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 
@@ -18,7 +24,6 @@ class DragGame extends StatefulWidget {
 class DragGameState extends GameState<DragGame> {
   var sequence = [];
   String data = "";
-  var guestPos = [0, 0];
 
   var joyX = 0.0;
   var joyY = 0.0;
@@ -30,26 +35,26 @@ class DragGameState extends GameState<DragGame> {
   }
 
   @override
-  void onRecieve(req) {
-    super.onRecieve(req);
-    data = req;
+  void onRecieve(JsonRequest request) {
+    super.onRecieve(request);
+    data = request.body;
 
-    if (req.toString().startsWith("POS")) {
-      var tmp = req
-          .toString()
-          .replaceAll("POS[", "")
-          .replaceAll("]", "")
-          .replaceAll(",", "")
-          .split(" ")
-          .cast();
-      guestPos[0] = int.parse(tmp[0]);
-      guestPos[1] = int.parse(tmp[1]);
-
-      guest.transform.position.x = guestPos[0].toDouble();
-      guest.transform.position.y = guestPos[1].toDouble();
-      print(guestPos);
+    if (request.type == "position") {
+      PositionRequest posReq = request.getPositionRequest();
+      guest.transform.position.x = posReq.x.toDouble();
+      guest.transform.position.y = posReq.y.toDouble();
     }
-    update();
+    if (request.type == "instanciation") {
+      InstanciationRequest posReq = request.getInstanciationRequest();
+      if (posReq.type == "food") {
+        Food f = new Food(posReq.x, posReq.y);
+        foods.add(f);
+        engine.addGameObject(f);
+      }
+    }
+    if (request.type == "win") {
+      onWin();
+    }
   }
 
   @override
@@ -58,7 +63,6 @@ class DragGameState extends GameState<DragGame> {
       onVerticalDragUpdate: (DragUpdateDetails details) {
         var x = details.globalPosition.dx.toInt();
         var y = details.globalPosition.dy.toInt();
-        sendPosition(x, y);
         setState(() {});
         update();
       },
@@ -96,14 +100,26 @@ class DragGameState extends GameState<DragGame> {
                   },
                 ),
               ),
-              Text("Food Eaten " + player.foodEaten.toString()),
+              Align(
+                alignment: AlignmentDirectional.topCenter,
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    "Your Food :  " + player.foodEaten.toString(),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        backgroundColor: Colors.amber),
+                  ),
+                ),
+              ),
             ],
           )),
     );
   }
 
   sendPosition(int dx, int dy) {
-    send("POS" + "[" + dx.toString() + ", " + dy.toString() + "]");
+    send(new PositionRequest(dx.toDouble(), dy.toDouble(), "0"));
   }
 
   Player player = new Player(0.0, 0.0);
@@ -116,20 +132,22 @@ class DragGameState extends GameState<DragGame> {
   initGame() {
     engine.addGameObject(player);
     engine.addGameObject(guest);
-
-    //spawn food randomly on the screen every 5 seconds
-    new Timer.periodic(new Duration(seconds: 5), (timer) {
-      var x = Random().nextInt(200);
-      var y = Random().nextInt(500);
-      var food = new Food(x.toDouble(), y.toDouble());
-      foods.add(food);
-      engine.addGameObject(food);
-    });
   }
 
   @override
   update() {
     super.update();
+
+    if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true &&
+        this.frames % 300 == 0) {
+      var x = Random().nextInt(200);
+      var y = Random().nextInt(500);
+      var food = new Food(x.toDouble(), y.toDouble());
+      foods.add(food);
+      engine.addGameObject(food);
+      send(new InstanciationRequest(x.toDouble(), y.toDouble(), "food", "0"));
+    }
+
     player.transform.position.x += joyX * player.speed;
     player.transform.position.y += joyY * player.speed;
     List<Food> toRemove = [];
@@ -137,6 +155,12 @@ class DragGameState extends GameState<DragGame> {
       if (player.renderer.intersectsRectangle(food.renderer as Rectangle)) {
         print("food eaten");
         player.foodEaten += 1;
+        food.destroy();
+        toRemove.add(food);
+      }
+      if (guest.renderer.intersectsRectangle(food.renderer as Rectangle)) {
+        print("food eaten");
+        guest.foodEaten += 1;
         food.destroy();
         toRemove.add(food);
       }
@@ -150,6 +174,29 @@ class DragGameState extends GameState<DragGame> {
     } else {
       player.renderer.color = new Color(0xFF0000FF);
       guest.renderer.color = new Color(0xFF0000FF);
+    }
+    if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) {}
+
+    sendPosition(player.transform.position.x.toInt(),
+        player.transform.position.y.toInt());
+
+    //si le score est de 10, on arrete le jeu
+    if (player.foodEaten == 10) {
+      onWin();
+    }
+  }
+
+  onWin() {
+    dispatchOnWin();
+    this.stop();
+    send(new WinRequest(true, "0"));
+  }
+
+  dispatchOnWin() {
+    if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) {
+      NavigationService.instance.navigateTo("GAMES");
+    } else {
+      NavigationService.instance.navigateTo("WAIT");
     }
   }
 }

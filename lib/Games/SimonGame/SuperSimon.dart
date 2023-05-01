@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../Utils/Requests/JsonRequest.dart';
 import '/Menus/ConnPage.dart';
-import 'GameState.dart';
+import '../GameState.dart';
 
 enum Mode { write, guess, wait }
 
@@ -17,9 +18,9 @@ class SuperSimonState extends GameState<SuperSimon> {
   var guestPos = [0, 0];
 
   @override
-  void onRecieve(req) {
+  void onRecieve(JsonRequest req) {
     super.onRecieve(req);
-    data = req;
+    data = req.body;
 
     if (req.toString().startsWith("SEQ")) {
       sequence = req
@@ -29,18 +30,7 @@ class SuperSimonState extends GameState<SuperSimon> {
           .replaceAll(",", "")
           .split(" ");
     }
-    if (req.toString().startsWith("POS")) {
-      var tmp = req
-          .toString()
-          .replaceAll("POS[", "")
-          .replaceAll("]", "")
-          .replaceAll(",", "")
-          .split(" ")
-          .cast();
-      guestPos[0] = int.parse(tmp[0]);
-      guestPos[1] = int.parse(tmp[1]);
-      print(guestPos);
-    }
+
   }
 
   @override
@@ -97,20 +87,7 @@ class SuperSimonState extends GameState<SuperSimon> {
                 'Current Sequence : $sequence',
                 style: const TextStyle(fontSize: 20),
               ),
-              Draggable(
-                child: Container(
-                  width: 100.0,
-                  height: 100.0,
-                  color: Colors.pink,
-                ),
-                // This will be displayed when the widget is being dragged
-                feedback: Container(
-                  width: 100.0,
-                  height: 100.0,
-                  color: Colors.pink,
-                ),
-                onDragCompleted: () => print("drag completed"),
-              ),
+              
               ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -127,10 +104,10 @@ class SuperSimonState extends GameState<SuperSimon> {
   }
 
   sendSequence() {
-    send("SEQ" + sequence.toString());
+    send(new JsonRequest("", "", "", ""));
   }
 
   sendPosition(int dx, int dy) {
-    send("POS" + "[" + dx.toString() + ", " + dy.toString() + "]");
+    send(new JsonRequest("", "", "", ""));
   }
 }

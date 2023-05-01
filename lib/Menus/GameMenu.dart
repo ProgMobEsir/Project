@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/Games/DragGame/DragGame.dart';
+import 'package:wifi_direct_json/navigation/NavigationService.dart';
+import '../Utils/Requests/JsonRequest.dart';
 import 'HomePage.dart';
-import 'package:wifi_direct_json/Games/SuperSimon.dart';
+import 'package:wifi_direct_json/Games/SimonGame/SuperSimon.dart';
 
 import '/Utils/GameManager.dart';
 
@@ -13,6 +17,18 @@ class GameMenu extends StatefulWidget {
 }
 
 class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    var i = GameManager.instance!.wifiP2PInfo?.clients.length;
+
+    for (var j = 0; j > i!; j--) {
+      GameManager.instance!.scores.add(0);
+    }
+    print(GameManager.instance!.scores);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,13 +68,27 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
                 backgroundColor: MaterialStateProperty.all(Colors.green),
               ),
               onPressed: () async {
-                GameManager.instance!.sendMessage("START GAME 1 2 6");
+                var randomGameName = "";
+                var random = Random().nextInt(2);
+                print(random);
+                if (random == 0) {
+                  randomGameName = "SIMON";
+                } else {
+                  randomGameName = "DRAG";
+                }
+                //random game
+                GameManager.instance!.sendJsonRequest(
+                    new JsonRequest("", "0", "GAME", randomGameName));
+
+                NavigationService.instance
+                    .navigateToReplacement("GAME_" + randomGameName);
               },
-              child: const Text("START GAME"), //automatic in games
+              child: const Text("Ramdom Game"), //automatic in games
             ),
             ElevatedButton(
               onPressed: () {
-                GameManager.instance!.sendMessage("GAME SIMON");
+                GameManager.instance!
+                    .sendJsonRequest(new JsonRequest("", "0", "GAME", "SIMON"));
 
                 Navigator.pushReplacement(
                   context,
@@ -71,7 +101,8 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
             ),
             ElevatedButton(
               onPressed: () {
-                GameManager.instance!.sendMessage("GAME DRAG");
+                GameManager.instance!
+                    .sendJsonRequest(new JsonRequest("", "0", "GAME", "DRAG"));
 
                 Navigator.pushReplacement(
                   context,

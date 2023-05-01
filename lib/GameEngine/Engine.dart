@@ -4,10 +4,15 @@ import '/GameEngine/shapes/Circle.dart';
 import 'shapes/Renderer.dart';
 
 class GameEngine {
+  bool run = true;
   List<GameObject> list = [];
 
   void addGameObject(GameObject s) {
     list.add(s);
+  }
+
+  void stop() {
+    run = false;
   }
 
   Widget getWidget() {
@@ -19,12 +24,14 @@ class GameEngine {
 
 class MyPainter extends CustomPainter {
   int x, y;
+
   GameEngine gameEngine;
 
   MyPainter(this.x, this.y, this.gameEngine);
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (!gameEngine.run) return;
     Paint paint = Paint()
       ..color = Colors.red
       ..strokeWidth = 5;
@@ -35,8 +42,9 @@ class MyPainter extends CustomPainter {
         tmp.add(element);
       }
       element.getRenderer().draw(canvas, paint);
+      element.update();
     });
-    
+
     tmp.forEach((element) {
       gameEngine.list.remove(element);
     });

@@ -1,5 +1,8 @@
+import 'Requests/JsonRequest.dart';
+
 class Reciever {
-  void onRecieve(req) {}
+  bool subscribed = true;
+  void onRecieve(JsonRequest req) {}
   String getName() {
     return "Reciever";
   }

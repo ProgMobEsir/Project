@@ -1,12 +1,17 @@
 import 'dart:async';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
+import 'package:wifi_direct_json/Utils/Requests/JsonRequest.dart';
 import '../navigation/NavigationService.dart';
 import '/Utils/Reciever.dart';
 import '/Utils/GameMods.dart';
 
 class GameManager {
   GameMode gameMode = GameMode.Solo;
+
+  List<int> scores = [];
+
   List<DiscoveredPeers> peers = [];
+
   WifiP2PInfo? wifiP2PInfo;
   StreamSubscription<WifiP2PInfo>? _streamWifiInfo;
   StreamSubscription<List<DiscoveredPeers>>? _streamPeers;
@@ -33,32 +38,36 @@ class GameManager {
   }
 
   void unsubscribe(game) {
-    subscribers.remove(game);
+    game.subscribed = false;
   }
 
-  void onRecieve(req) {
-    print("Recieving string");
+  void onRecieve(String reqette) {
+    JsonRequest jReq = JsonRequest.FromString(reqette);
+    print(reqette);
 
+    var tounsubscribe = [];
     for (var sub in subscribers) {
-      print("sending to ${sub.getName()}");
-      sub.onRecieve(req);
+      if (sub.subscribed)
+        sub.onRecieve(jReq);
+      else {
+        tounsubscribe.add(sub);
+      }
+    }
+    for (var sub in tounsubscribe) {
+      subscribers.remove(sub);
     }
 
-    parseRequest(req);
+    parseRequest(jReq);
   }
 
-  void parseRequest(String req) {
+  void parseRequest(JsonRequest jsonReq) {
     //set the request in a table
-    List<String> command = req.split(" ");
-
-    print(command);
-
-    if (command[0] == "GAME") {
-      if (command[1] == "SIMON") {
+    if (jsonReq.type == "GAME") {
+      if (jsonReq.metadata == "SIMON") {
         print("starting simon");
         NavigationService.instance.navigateToReplacement("GAME_SIMON");
-      } else if (command[1] == "DRAG") {
-        print("starting simon");
+      } else if (jsonReq.metadata == "DRAG") {
+        print("starting agar");
         NavigationService.instance.navigateToReplacement("GAME_DRAG");
       }
     }
@@ -102,9 +111,8 @@ class GameManager {
           print(
               "ID: ${transfer.id}, FILENAME: ${transfer.filename}, PATH: ${transfer.path}, COUNT: ${transfer.count}, TOTAL: ${transfer.total}, COMPLETED: ${transfer.completed}, FAILED: ${transfer.failed}, RECEIVING: ${transfer.receiving}");
         },
-        receiveString: (req) async {
-          print("Recieving from socket");
-          GameManager.instance!.onRecieve(req);
+        receiveString: (req_) async {
+          GameManager.instance!.onRecieve(req_);
         },
       );
     }
@@ -124,9 +132,8 @@ class GameManager {
           print(
               "ID: ${transfer.id}, FILENAME: ${transfer.filename}, PATH: ${transfer.path}, COUNT: ${transfer.count}, TOTAL: ${transfer.total}, COMPLETED: ${transfer.completed}, FAILED: ${transfer.failed}, RECEIVING: ${transfer.receiving}");
         },
-        receiveString: (req) async {
-          print("Recieving from socket");
-          GameManager.instance!.onRecieve(req);
+        receiveString: (req_) async {
+          GameManager.instance!.onRecieve(req_);
         },
       );
     }
@@ -137,6 +144,10 @@ class GameManager {
   }
 
   Future sendMessage(String s) async {
-    _flutterP2pConnectionPlugin.sendStringToSocket(s);
+    sendJsonRequest(JsonRequest("MESSAGE", "0", s, ""));
+  }
+
+  Future sendJsonRequest(JsonRequest toSend) async {
+    _flutterP2pConnectionPlugin.sendStringToSocket(toSend.getRequest());
   }
 }
