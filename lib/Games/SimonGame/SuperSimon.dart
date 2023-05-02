@@ -30,7 +30,6 @@ class SuperSimonState extends GameState<SuperSimon> {
           .replaceAll(",", "")
           .split(" ");
     }
-
   }
 
   @override

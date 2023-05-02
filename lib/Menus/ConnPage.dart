@@ -74,47 +74,49 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
         ),
         //add padding to the left of this box
 
-        body: Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(padding: const EdgeInsets.only(top: 20)),
-                Text(
-                    "IP: ${GameManager.instance!.wifiP2PInfo == null ? "null" : GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}"),
-                GameManager.instance!.wifiP2PInfo != null
-                    ? Text(
-                        "connected: ${GameManager.instance!.wifiP2PInfo?.isConnected}, isGroupOwner: ${GameManager.instance!.wifiP2PInfo?.isGroupOwner}, groupFormed: ${GameManager.instance!.wifiP2PInfo?.groupFormed}, groupOwnerAddress: ${GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}, clients: ${GameManager.instance!.wifiP2PInfo?.clients}")
-                    : const SizedBox.shrink(),
-                const SizedBox(height: 10),
-                Padding(padding: const EdgeInsets.only(top: 20)),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ClientMenu(),
-                      ),
-                    );
-                  },
-                  child: const Text("Play as a guest"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HostMenu(),
-                      ),
-                    );
-                  },
-                  child: const Text("Play as Host"),
-                ),
-                Padding(padding: const EdgeInsets.only(top: 20)),
-              ],
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(padding: const EdgeInsets.only(top: 20)),
+                  Text(
+                      "IP: ${GameManager.instance!.wifiP2PInfo == null ? "null" : GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}"),
+                  GameManager.instance!.wifiP2PInfo != null
+                      ? Text(
+                          "connected: ${GameManager.instance!.wifiP2PInfo?.isConnected}, isGroupOwner: ${GameManager.instance!.wifiP2PInfo?.isGroupOwner}, groupFormed: ${GameManager.instance!.wifiP2PInfo?.groupFormed}, groupOwnerAddress: ${GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}, clients: ${GameManager.instance!.wifiP2PInfo?.clients}")
+                      : const SizedBox.shrink(),
+                  const SizedBox(height: 10),
+                  Padding(padding: const EdgeInsets.only(top: 20)),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ClientMenu(),
+                        ),
+                      );
+                    },
+                    child: const Text("Play as a guest"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HostMenu(),
+                        ),
+                      );
+                    },
+                    child: const Text("Play as Host"),
+                  ),
+                  Padding(padding: const EdgeInsets.only(top: 20)),
+                ],
+              ),
             ),
           ),
         ));
