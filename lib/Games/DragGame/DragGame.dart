@@ -5,6 +5,7 @@ import 'package:wifi_direct_json/Games/DragGame/Player.dart';
 import 'package:wifi_direct_json/Games/DragGame/food.dart';
 import 'package:wifi_direct_json/Games/DragGame/guest.dart';
 import 'package:wifi_direct_json/Menus/ConnPage.dart';
+import 'package:wifi_direct_json/Menus/GameMenu.dart';
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/WinRequest.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
@@ -26,7 +27,9 @@ class DragGameState extends GameState<DragGame> {
   var sequence = [];
   String data = "";
 
-  var mapSize = [390,500];
+  var spawnRate = 100;
+
+  var mapSize = [1000,1000];
 
   var joyX = 0.0;
   var joyY = 0.0;
@@ -79,12 +82,7 @@ class DragGameState extends GameState<DragGame> {
               IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ConnPage(),
-                    ),
-                  );
+                  NavigationService.instance.navigateTo("GAMES");
                 },
               ),
             ],
@@ -138,18 +136,31 @@ class DragGameState extends GameState<DragGame> {
     engine.addGameObject(guest);
   }
 
+  void boundPlayer(){
+    if (player.transform.position.x > mapSize[0]/2) {
+      player.transform.position.x = mapSize[0]/2;
+    }
+    if (player.transform.position.x < -mapSize[0]/2) {
+      player.transform.position.x = -mapSize[0]/2;
+    }
+    if (player.transform.position.y > mapSize[1]/2) {
+      player.transform.position.y = mapSize[1]/2;
+    }
+    if (player.transform.position.y < -mapSize[1]/2) {
+      player.transform.position.y = -mapSize[1]/2;
+    }
+
+  }
+
   @override
   update() {
     super.update();
 
     if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true &&
-      this.frames % 200 == 0) {
+      this.frames % spawnRate == 0) {
       //get the size of the screen in pixel
-      var screenSize = MediaQuery.of(context).size;
-
-        
-      var x = Random().nextInt(screenSize.width.toInt());
-      var y = Random().nextInt(screenSize.height.toInt());
+      var x = Random().nextInt(mapSize[0]) - mapSize[0]/2;
+      var y = Random().nextInt(mapSize[1]) - mapSize[1]/2;
       var food = new Food(x.toDouble(), y.toDouble());
       foods.add(food);
       engine.addGameObject(food);
@@ -158,20 +169,6 @@ class DragGameState extends GameState<DragGame> {
 
     player.transform.position.x += joyX * player.speed;
     player.transform.position.y += joyY * player.speed;
-
-    //checking boundary collision
-    if (player.transform.position.x < 0) {
-      player.transform.position.x = 0;
-    }
-    if (player.transform.position.x + player.transform.scale.x > mapSize[0]) {
-      player.transform.position.x = mapSize[0] - player.transform.scale.x;
-    }
-    if (player.transform.position.y < 0) {
-      player.transform.position.y = 0;
-    }
-    if (player.transform.position.y + player.transform.scale.y > mapSize[1]) {
-      player.transform.position.y = mapSize[1] - player.transform.scale.y;
-    }
 
     List<Food> toRemove = [];
     for (var food in foods) {
@@ -201,7 +198,6 @@ class DragGameState extends GameState<DragGame> {
       player.renderer.color = Color.fromARGB(255, 31, 155, 53);
       guest.renderer.color = new Color(0xFF0000FF);
     }
-    if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) {}
 
     sendPosition(player.transform.position.x.toInt(),
         player.transform.position.y.toInt());
