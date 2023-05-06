@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
+import 'package:wifi_direct_json/Utils/Requests/SequenceRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/WinRequest.dart';
 
 import 'InstanciationRequest.dart';
@@ -52,4 +53,9 @@ class JsonRequest {
   WinRequest getWinRequest() {
     return new WinRequest.FromString(getRequest());
   }
+
+SequenceRequest getSequenceRequest() {
+    return new SequenceRequest.FromString(getRequest());
+  }
+
 }

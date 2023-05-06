@@ -43,8 +43,6 @@ class GameManager {
 
   void onRecieve(String reqette) {
     JsonRequest jReq = JsonRequest.FromString(reqette);
-    print(reqette);
-
     var tounsubscribe = [];
     for (var sub in subscribers) {
       if (sub.subscribed)

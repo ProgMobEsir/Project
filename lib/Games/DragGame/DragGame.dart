@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/GameEngine/colliders/RectCollider.dart';
+import 'package:wifi_direct_json/GameEngine/shapes/ImageRenderer.dart';
 import 'package:wifi_direct_json/Games/DragGame/Player.dart';
 import 'package:wifi_direct_json/Games/DragGame/food.dart';
 import 'package:wifi_direct_json/Menus/ConnPage.dart';
@@ -8,6 +10,7 @@ import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/WinRequest.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
 import '../../GameEngine/shapes/Rectangle.dart';
+import '../../Utils/AudioManager.dart';
 import '../../Utils/GameManager.dart';
 import '../../Utils/Requests/InstanciationRequest.dart';
 import '../../Utils/Requests/JsonRequest.dart';
@@ -53,6 +56,8 @@ class DragGameState extends GameState<DragGame> {
       }
     }
     if (request.type == "win") {
+      AudioManager.getInstance().playEffect("loose.mp3");
+      
       onWin();
     }
   }
@@ -139,7 +144,7 @@ class DragGameState extends GameState<DragGame> {
     super.update();
 
     if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true &&
-        this.frames % 300 == 0) {
+        this.frames % 200 == 0) {
       var x = Random().nextInt(200);
       var y = Random().nextInt(500);
       var food = new Food(x.toDouble(), y.toDouble());
@@ -152,13 +157,16 @@ class DragGameState extends GameState<DragGame> {
     player.transform.position.y += joyY * player.speed;
     List<Food> toRemove = [];
     for (var food in foods) {
-      if (player.renderer.intersectsRectangle(food.renderer as Rectangle)) {
+      if (player.collider.isCollidingRectCollider(food.collider as RectCollider)) {
         print("food eaten");
         player.foodEaten += 1;
         food.destroy();
         toRemove.add(food);
+        AudioManager.getInstance().playEffect("powerup.mp3");
+
       }
-      if (guest.renderer.intersectsRectangle(food.renderer as Rectangle)) {
+
+      if (guest.collider.isCollidingRectCollider(food.collider as RectCollider)) {
         print("food eaten");
         guest.foodEaten += 1;
         food.destroy();
@@ -168,11 +176,11 @@ class DragGameState extends GameState<DragGame> {
 
     foods.removeWhere((element) => toRemove.contains(element));
 
-    if (guest.renderer.intersectsRectangle(player.renderer as Rectangle)) {
-      player.renderer.color = new Color(0xFF00FF00);
+    if (guest.collider.isCollidingRectCollider(player.collider as RectCollider)) {
+      player.renderer.color = Color.fromARGB(255, 216, 73, 255);
       guest.renderer.color = new Color(0xFF00FF00);
     } else {
-      player.renderer.color = new Color(0xFF0000FF);
+      player.renderer.color = Color.fromARGB(255, 31, 155, 53);
       guest.renderer.color = new Color(0xFF0000FF);
     }
     if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) {}
@@ -182,6 +190,7 @@ class DragGameState extends GameState<DragGame> {
 
     //si le score est de 10, on arrete le jeu
     if (player.foodEaten == 10) {
+      AudioManager.getInstance().playEffect("win.mp3");
       onWin();
     }
   }
@@ -190,10 +199,11 @@ class DragGameState extends GameState<DragGame> {
     dispatchOnWin();
     this.stop();
     send(new WinRequest(true, "0"));
+
   }
 
   dispatchOnWin() {
-    if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) {
+    if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) { 
       NavigationService.instance.navigateTo("GAMES");
     } else {
       NavigationService.instance.navigateTo("WAIT");

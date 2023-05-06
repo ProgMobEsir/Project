@@ -21,12 +21,7 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
   void initState() {
     // TODO: implement initState
     super.initState();
-    var i = GameManager.instance!.wifiP2PInfo?.clients.length;
-
-    for (var j = 0; j > i!; j--) {
-      GameManager.instance!.scores.add(0);
-    }
-    print(GameManager.instance!.scores);
+    
   }
 
   @override

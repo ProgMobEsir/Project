@@ -7,7 +7,8 @@ class Player extends GameObject {
   Player(x, y) {
     transform.position.x = x;
     transform.position.y = y;
-    renderer = new Rectangle(this, 100, 100);
+    transform.scale.x = 50;
+    transform.scale.y = 50;
   }
   // ...
   void update() {

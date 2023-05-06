@@ -1,5 +1,7 @@
+import 'package:wifi_direct_json/GameEngine/colliders/RectCollider.dart';
 import 'package:wifi_direct_json/GameEngine/transform.dart';
 import 'Vector2D.dart';
+import 'colliders/collider.dart';
 import 'shapes/Renderer.dart';
 import 'package:wifi_direct_json/GameEngine/shapes/Rectangle.dart';
 
@@ -9,10 +11,13 @@ class GameObject {
   Transform transform =
       new Transform(new Vector2D(0, 0), new Vector2D(1, 1), 0);
 
-  Renderer renderer = new Rectangle(null, 100, 100);
+  Renderer renderer = new Rectangle(null);
+
+  Collider collider = new RectCollider(null);
 
   GameObject() {
-    renderer = new Rectangle(this, 100, 100);
+    renderer = new Rectangle(this);
+    collider = new RectCollider(this);
   }
 
   Renderer getRenderer() {

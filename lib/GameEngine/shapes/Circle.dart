@@ -10,25 +10,6 @@ class Circle extends Renderer {
 
   Circle.withColor(parent, this.radius, Color color) : super(parent, color) {}
 
-  bool contains(int x, int y) {
-    return (x - this.parent!.transform.position.x) *
-                (x - this.parent!.transform.position.x) +
-            (y - this.parent!.transform.position.y) *
-                (y - this.parent!.transform.position.y) <
-        radius;
-  }
-
-  @override
-  bool intersectsCircle(Circle other) {
-    return (parent!.transform.position.x - other.parent!.transform.position.x) *
-                (parent!.transform.position.x -
-                    other.parent!.transform.position.x) +
-            (parent!.transform.position.y -
-                    other.parent!.transform.position.y) *
-                (parent!.transform.position.y -
-                    other.parent!.transform.position.y) <
-        (radius + other.radius) * (radius + other.radius);
-  }
 
   bool draw(Canvas canvas, Paint paint) {
     paint.color = this.color;
