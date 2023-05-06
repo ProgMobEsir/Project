@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:wifi_direct_json/GameEngine/shapes/Rectangle.dart';
 
+import '../Camera.dart';
 import 'Renderer.dart';
 
 class Circle extends Renderer {
@@ -14,8 +15,8 @@ class Circle extends Renderer {
   bool draw(Canvas canvas, Paint paint) {
     paint.color = this.color;
     canvas.drawCircle(
-        Offset(parent!.transform.position.x.toDouble(),
-            parent!.transform.position.y.toDouble()),
+        Offset(parent!.transform.position.x.toDouble() - Camera.dx,
+            parent!.transform.position.y.toDouble() - Camera.dx) ,
         radius,
         paint);
     return true;

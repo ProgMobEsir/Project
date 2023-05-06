@@ -1,15 +1,14 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/GameEngine/colliders/RectCollider.dart';
-import 'package:wifi_direct_json/GameEngine/shapes/ImageRenderer.dart';
 import 'package:wifi_direct_json/Games/DragGame/Player.dart';
 import 'package:wifi_direct_json/Games/DragGame/food.dart';
+import 'package:wifi_direct_json/Games/DragGame/guest.dart';
 import 'package:wifi_direct_json/Menus/ConnPage.dart';
+import 'package:wifi_direct_json/Menus/GameMenu.dart';
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/WinRequest.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
-import '../../GameEngine/shapes/Rectangle.dart';
 import '../../Utils/AudioManager.dart';
 import '../../Utils/GameManager.dart';
 import '../../Utils/Requests/InstanciationRequest.dart';
@@ -27,6 +26,10 @@ class DragGame extends StatefulWidget {
 class DragGameState extends GameState<DragGame> {
   var sequence = [];
   String data = "";
+
+  var spawnRate = 100;
+
+  var mapSize = [1000,1000];
 
   var joyX = 0.0;
   var joyY = 0.0;
@@ -79,12 +82,7 @@ class DragGameState extends GameState<DragGame> {
               IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ConnPage(),
-                    ),
-                  );
+                  NavigationService.instance.navigateTo("GAMES");
                 },
               ),
             ],
@@ -127,9 +125,8 @@ class DragGameState extends GameState<DragGame> {
     send(new PositionRequest(dx.toDouble(), dy.toDouble(), "0"));
   }
 
-  Player player = new Player(0.0, 0.0);
-
-  Player guest = new Player(100.0, 100.0);
+  Player player = new Player(100.0, 100.0);
+  Guest guest = new Guest(100.0, 250.0);
 
   //list of food
   List<Food> foods = [];
@@ -139,14 +136,31 @@ class DragGameState extends GameState<DragGame> {
     engine.addGameObject(guest);
   }
 
+  void boundPlayer(){
+    if (player.transform.position.x > mapSize[0]/2) {
+      player.transform.position.x = mapSize[0]/2;
+    }
+    if (player.transform.position.x < -mapSize[0]/2) {
+      player.transform.position.x = -mapSize[0]/2;
+    }
+    if (player.transform.position.y > mapSize[1]/2) {
+      player.transform.position.y = mapSize[1]/2;
+    }
+    if (player.transform.position.y < -mapSize[1]/2) {
+      player.transform.position.y = -mapSize[1]/2;
+    }
+
+  }
+
   @override
   update() {
     super.update();
 
     if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true &&
-        this.frames % 200 == 0) {
-      var x = Random().nextInt(200);
-      var y = Random().nextInt(500);
+      this.frames % spawnRate == 0) {
+      //get the size of the screen in pixel
+      var x = Random().nextInt(mapSize[0]) - mapSize[0]/2;
+      var y = Random().nextInt(mapSize[1]) - mapSize[1]/2;
       var food = new Food(x.toDouble(), y.toDouble());
       foods.add(food);
       engine.addGameObject(food);
@@ -155,6 +169,7 @@ class DragGameState extends GameState<DragGame> {
 
     player.transform.position.x += joyX * player.speed;
     player.transform.position.y += joyY * player.speed;
+
     List<Food> toRemove = [];
     for (var food in foods) {
       if (player.collider.isCollidingRectCollider(food.collider as RectCollider)) {
@@ -183,7 +198,6 @@ class DragGameState extends GameState<DragGame> {
       player.renderer.color = Color.fromARGB(255, 31, 155, 53);
       guest.renderer.color = new Color(0xFF0000FF);
     }
-    if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) {}
 
     sendPosition(player.transform.position.x.toInt(),
         player.transform.position.y.toInt());
@@ -199,7 +213,6 @@ class DragGameState extends GameState<DragGame> {
     dispatchOnWin();
     this.stop();
     send(new WinRequest(true, "0"));
-
   }
 
   dispatchOnWin() {
