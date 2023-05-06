@@ -21,22 +21,18 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
     }
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    //GameManager.instance?.init();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    //_flutterP2pConnectionPlugin?.unregister();
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
-      //_flutterP2pConnectionPlugin?.unregister();
     } else if (state == AppLifecycleState.resumed) {
-      //_flutterP2pConnectionPlugin?.register();
     }
   }
 

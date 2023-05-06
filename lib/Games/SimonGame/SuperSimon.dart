@@ -1,4 +1,10 @@
+import 'dart:async';
+
+
+import '../../Utils/AudioManager.dart';
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/Utils/Requests/SequenceRequest.dart';
+import '../../Utils/GameManager.dart';
 import '../../Utils/Requests/JsonRequest.dart';
 import '/Menus/ConnPage.dart';
 import '../GameState.dart';
@@ -14,21 +20,29 @@ class SuperSimon extends StatefulWidget {
 
 class SuperSimonState extends GameState<SuperSimon> {
   var sequence = [];
-  String data = "";
-  var guestPos = [0, 0];
+  var mode = Mode.write;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (GameManager.instance?.wifiP2PInfo?.isGroupOwner == true ) {
+      mode = Mode.guess; 
+    }
+    else {
+      mode = Mode.write;
+    }
+  }
 
   @override
   void onRecieve(JsonRequest req) {
+    
     super.onRecieve(req);
-    data = req.body;
 
-    if (req.toString().startsWith("SEQ")) {
-      sequence = req
-          .toString()
-          .replaceAll("SEQ[", "")
-          .replaceAll("]", "")
-          .replaceAll(",", "")
-          .split(" ");
+    if (req.type == "sequence") {
+      String seq = req.getSequenceRequest().sequence;
+      sequence = seq.split(",");
+      playSequence();
     }
   }
 
@@ -37,8 +51,6 @@ class SuperSimonState extends GameState<SuperSimon> {
     //return the widget with a text displaying the number
     return GestureDetector(
       onVerticalDragUpdate: (DragUpdateDetails details) {
-        sendPosition(details.globalPosition.dx.toInt(),
-            details.globalPosition.dy.toInt());
       },
       child: Scaffold(
         appBar: AppBar(
@@ -80,12 +92,50 @@ class SuperSimonState extends GameState<SuperSimon> {
                       '1',
                     ),
                   ),
+                                                    ElevatedButton(
+                    key: const Key('bt3'),
+                    onPressed: () {
+                      setState(() {
+                        sequence.add("3");
+                      });
+                    },
+                    child: Text(
+                      '3',
+                    ),
+                  ),
+                  
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                                  ElevatedButton(
+                    key: const Key('bt2'),
+                    onPressed: () {
+                      setState(() {
+                        sequence.add("2");
+                      });
+                    },
+                    child: Text(
+                      '2',
+                    ),
+                  ),
+                  ElevatedButton(
+                    key: const Key('bt4'),
+                    onPressed: () {
+                      setState(() {
+                        sequence.add("4");
+                      });
+                    },
+                    child: Text(
+                      '4',
+                    ),
+                  ),]),
               Text(
                 'Current Sequence : $sequence',
                 style: const TextStyle(fontSize: 20),
               ),
+              Text(textSeq),
               
               ElevatedButton(
                 onPressed: () {
@@ -103,10 +153,27 @@ class SuperSimonState extends GameState<SuperSimon> {
   }
 
   sendSequence() {
-    send(new JsonRequest("", "", "", ""));
+    var formedSeq = sequence.join(",");
+    send(new SequenceRequest(formedSeq, ""));
   }
 
-  sendPosition(int dx, int dy) {
-    send(new JsonRequest("", "", "", ""));
+  var textSeq = "";
+  playSequence(){
+    for (var i = 0; i <= sequence.length ; i++) {
+      Timer(Duration(seconds: i), () {
+
+        if (i < sequence.length ){
+          textSeq = sequence[i];
+           
+          AudioManager.getInstance().play("beep.mp3");
+        }
+        else{
+          textSeq = "";
+        }
+        
+      });
+    }
+
   }
+
 }

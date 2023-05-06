@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/Utils/AudioManager.dart';
+import 'package:wifi_direct_json/Utils/ImageLibrary.dart';
+import 'package:wifi_direct_json/navigation/NavigationService.dart';
 import 'GameMenu.dart';
 import 'ConnPage.dart';
 import '/Utils/GameMods.dart';
@@ -7,11 +10,29 @@ import '/Utils/GameManager.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+
+
   @override
   State<HomePage> createState() => _HomePageState();
+  
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  
+  @override
+  void initState() {
+    super.initState();
+    AudioManager.getInstance().playMusic("win.mp3");
+    ImageLibrary.instance;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +72,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 );
               },
               child: const Text('Play multiplayer'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                NavigationService.instance.navigateToReplacement("SETTINGS");
+              },
+              child: const Text('Settings'),
             ),
           ],
         ),

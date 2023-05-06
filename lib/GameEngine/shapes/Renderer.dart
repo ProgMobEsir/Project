@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import '../GameObject.dart';
+import 'ImageRenderer.dart';
 import 'Rectangle.dart';
 
 import 'Circle.dart';
@@ -10,17 +11,6 @@ class Renderer {
   Color color;
 
   Renderer(this.parent, this.color);
-  bool intersects(Renderer r) {
-    return false;
-  }
-
-  bool intersectsCircle(Circle o) {
-    return false;
-  }
-
-  bool intersectsRectangle(Rectangle rect) {
-    return false;
-  }
 
   draw(Canvas canvas, Paint paint) {}
 }
