@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/image.dart' as WDImg;
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/Utils/ImageLibrary.dart';
 
+import '../Camera.dart';
 import 'Renderer.dart';
 
 class ImageRenderer extends Renderer {
@@ -20,8 +21,8 @@ class ImageRenderer extends Renderer {
 
   // Calculate the destination rectangle based on the parent's transform
   final destRect = Rect.fromLTWH(
-    parent!.transform.position.x,
-    parent!.transform.position.y,
+    parent!.transform.position.x -  Camera.dx,
+    parent!.transform.position.y - Camera.dy,
     parent!.transform.scale.x,
     parent!.transform.scale.y,
   );

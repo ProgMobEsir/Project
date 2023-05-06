@@ -3,10 +3,10 @@ import 'package:wifi_direct_json/GameEngine/shapes/Rectangle.dart';
 
 import '../../GameEngine/Camera.dart';
 
-class Player extends GameObject {
+class Guest extends GameObject {
   var speed = 5;
   var foodEaten = 0;
-  Player(x, y) {
+  Guest(x, y) {
     transform.position.x = x;
     transform.position.y = y;
     transform.scale.x = 50;
@@ -14,8 +14,6 @@ class Player extends GameObject {
   }
   // ...
   void update() {
-    Camera.dx = transform.position.x -200;
-    Camera.dy = transform.position.y -200;
     // ...
   }
 }

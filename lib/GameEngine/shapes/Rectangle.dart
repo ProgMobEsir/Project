@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:wifi_direct_json/GameEngine/Camera.dart';
+
 import 'Renderer.dart';
 
 class Rectangle extends Renderer {
@@ -12,8 +14,8 @@ class Rectangle extends Renderer {
     paint.color = this.color;
 
     canvas.drawRect(
-        Rect.fromLTWH(parent!.transform.position.x.toDouble(),
-            parent!.transform.position.y.toDouble(), parent!.transform.scale.x, parent!.transform.scale.y),
+        Rect.fromLTWH(parent!.transform.position.x.toDouble()- Camera.dx,
+            parent!.transform.position.y.toDouble() - Camera.dy, parent!.transform.scale.x, parent!.transform.scale.y),
         paint);
     return true;
   }

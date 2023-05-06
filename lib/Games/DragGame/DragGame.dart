@@ -1,15 +1,13 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/GameEngine/colliders/RectCollider.dart';
-import 'package:wifi_direct_json/GameEngine/shapes/ImageRenderer.dart';
 import 'package:wifi_direct_json/Games/DragGame/Player.dart';
 import 'package:wifi_direct_json/Games/DragGame/food.dart';
+import 'package:wifi_direct_json/Games/DragGame/guest.dart';
 import 'package:wifi_direct_json/Menus/ConnPage.dart';
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/WinRequest.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
-import '../../GameEngine/shapes/Rectangle.dart';
 import '../../Utils/AudioManager.dart';
 import '../../Utils/GameManager.dart';
 import '../../Utils/Requests/InstanciationRequest.dart';
@@ -27,6 +25,8 @@ class DragGame extends StatefulWidget {
 class DragGameState extends GameState<DragGame> {
   var sequence = [];
   String data = "";
+
+  var mapSize = [390,500];
 
   var joyX = 0.0;
   var joyY = 0.0;
@@ -127,9 +127,8 @@ class DragGameState extends GameState<DragGame> {
     send(new PositionRequest(dx.toDouble(), dy.toDouble(), "0"));
   }
 
-  Player player = new Player(0.0, 0.0);
-
-  Player guest = new Player(100.0, 100.0);
+  Player player = new Player(100.0, 100.0);
+  Guest guest = new Guest(100.0, 250.0);
 
   //list of food
   List<Food> foods = [];
@@ -144,9 +143,13 @@ class DragGameState extends GameState<DragGame> {
     super.update();
 
     if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true &&
-        this.frames % 200 == 0) {
-      var x = Random().nextInt(200);
-      var y = Random().nextInt(500);
+      this.frames % 200 == 0) {
+      //get the size of the screen in pixel
+      var screenSize = MediaQuery.of(context).size;
+
+        
+      var x = Random().nextInt(screenSize.width.toInt());
+      var y = Random().nextInt(screenSize.height.toInt());
       var food = new Food(x.toDouble(), y.toDouble());
       foods.add(food);
       engine.addGameObject(food);
@@ -155,6 +158,21 @@ class DragGameState extends GameState<DragGame> {
 
     player.transform.position.x += joyX * player.speed;
     player.transform.position.y += joyY * player.speed;
+
+    //checking boundary collision
+    if (player.transform.position.x < 0) {
+      player.transform.position.x = 0;
+    }
+    if (player.transform.position.x + player.transform.scale.x > mapSize[0]) {
+      player.transform.position.x = mapSize[0] - player.transform.scale.x;
+    }
+    if (player.transform.position.y < 0) {
+      player.transform.position.y = 0;
+    }
+    if (player.transform.position.y + player.transform.scale.y > mapSize[1]) {
+      player.transform.position.y = mapSize[1] - player.transform.scale.y;
+    }
+
     List<Food> toRemove = [];
     for (var food in foods) {
       if (player.collider.isCollidingRectCollider(food.collider as RectCollider)) {
@@ -199,7 +217,6 @@ class DragGameState extends GameState<DragGame> {
     dispatchOnWin();
     this.stop();
     send(new WinRequest(true, "0"));
-
   }
 
   dispatchOnWin() {
