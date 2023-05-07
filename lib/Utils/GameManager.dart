@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 import 'package:wifi_direct_json/Utils/Requests/JsonRequest.dart';
 import '../navigation/NavigationService.dart';
@@ -8,7 +10,9 @@ import '/Utils/GameMods.dart';
 class GameManager {
   GameMode gameMode = GameMode.Solo;
 
-  List<int> scores = [];
+  String id = "";
+
+  var scores = {};
 
   List<DiscoveredPeers> peers = [];
 
@@ -69,6 +73,9 @@ class GameManager {
         NavigationService.instance.navigateToReplacement("GAME_DRAG");
       }
     }
+    if (jsonReq.type == "scores") {
+      scores = {1: 2};
+    }
   }
 
   void init() async {
@@ -94,6 +101,15 @@ class GameManager {
     await _flutterP2pConnectionPlugin.removeGroup();
 
     bool? discovering = await _flutterP2pConnectionPlugin.discover();
+
+    for (var interface in await NetworkInterface.list()) {
+      for (var addr in interface.addresses) {
+        // Check if the address is an IPv4 and not a loopback address
+        if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
+          id = addr.address;
+        }
+      }
+    }
   }
 
   Future startSocket() async {
@@ -103,7 +119,12 @@ class GameManager {
         downloadPath: "/storage/emulated/0/Download/",
         maxConcurrentDownloads: 2,
         deleteOnError: true,
-        onConnect: (name, address) {},
+        onConnect: (name, address) {
+          if (scores.isEmpty) {
+            scores["HOST"] = 0;
+          }
+          scores[address] = 0;
+        },
         transferUpdate: (transfer) {
           if (transfer.completed) {}
           print(
@@ -123,7 +144,9 @@ class GameManager {
         downloadPath: "/storage/emulated/0/Download/",
         maxConcurrentDownloads: 3,
         deleteOnError: true,
-        onConnect: (address) {},
+        onConnect: (address) {
+          print("connected to $address");
+        },
         transferUpdate: (transfer) {
           // if (transfer.count == 0) transfer.cancelToken?.cancel();
           if (transfer.completed) {}
@@ -142,10 +165,17 @@ class GameManager {
   }
 
   Future sendMessage(String s) async {
-    sendJsonRequest(JsonRequest("MESSAGE", "0", s, ""));
+    sendJsonRequest(JsonRequest("MESSAGE", s, ""));
   }
 
   Future sendJsonRequest(JsonRequest toSend) async {
+    //get the adress of the current device add it to the request
+    toSend.peer = wifiP2PInfo!.groupOwnerAddress;
+
     _flutterP2pConnectionPlugin.sendStringToSocket(toSend.getRequest());
+  }
+
+  String getMyID() {
+    return id;
   }
 }

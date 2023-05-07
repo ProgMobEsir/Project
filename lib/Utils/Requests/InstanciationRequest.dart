@@ -7,8 +7,8 @@ class InstanciationRequest extends JsonRequest {
   double x = 0;
   double y = 0;
 
-  InstanciationRequest(this.x, this.y, this.type, peer)
-      : super('{"x":"$x","y":"$y","type":"$type"}', peer, "instanciation", "");
+  InstanciationRequest(this.x, this.y, this.type)
+      : super('{"x":"$x","y":"$y","type":"$type"}', "instanciation", "");
 
   InstanciationRequest.FromString(String s) : super.FromString(s) {
     var jsonDecoded = JsonDecoder().convert(body);

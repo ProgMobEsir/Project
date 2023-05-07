@@ -1,7 +1,4 @@
 import 'package:wifi_direct_json/GameEngine/GameObject.dart';
-import 'package:wifi_direct_json/GameEngine/shapes/Rectangle.dart';
-
-import '../../GameEngine/Camera.dart';
 
 class Guest extends GameObject {
   var speed = 5;

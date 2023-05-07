@@ -4,7 +4,7 @@ import 'JsonRequest.dart';
 
 class WinRequest extends JsonRequest {
   bool win = false;
-  WinRequest(this.win, peer) : super('{"Win":"$win"}', peer, "win", "");
+  WinRequest(this.win) : super('{"Win":"$win"}', "win", "");
 
   WinRequest.FromString(String s) : super.FromString(s) {
     var jsonDecoded = JsonDecoder().convert(body);

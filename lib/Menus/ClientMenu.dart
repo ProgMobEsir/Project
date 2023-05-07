@@ -166,6 +166,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
               ),
               ElevatedButton(
                 onPressed: () async {
+                  setState(() {});
                   var info = await GameManager
                       .instance?.flutterP2pConnectionPlugin
                       .groupInfo(); //button

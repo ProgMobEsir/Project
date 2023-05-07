@@ -10,15 +10,11 @@ import '/Utils/GameManager.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-
-
   @override
   State<HomePage> createState() => _HomePageState();
-  
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  
   @override
   void initState() {
     super.initState();
@@ -30,7 +26,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    
   }
 
   @override
@@ -64,6 +59,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             ),
             ElevatedButton(
               onPressed: () {
+                GameManager.instance!.gameMode = GameMode.Multi;
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(

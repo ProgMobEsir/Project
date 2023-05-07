@@ -16,7 +16,6 @@ var  imagesAssets = {};
 
 
 Future<void> loadAsset() async {
-  //put ui.Images from assets folder of flutter app loaded into the imagesAssets map with a name as key
   imagesAssets["default"] = await loadImage("assets/images/default.PNG");
   imagesAssets["food"] = await loadImage("assets/images/coin.PNG");
 }

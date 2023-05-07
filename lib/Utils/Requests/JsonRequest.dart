@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:wifi_direct_json/Utils/GameManager.dart';
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
+import 'package:wifi_direct_json/Utils/Requests/ScoreRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/SequenceRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/WinRequest.dart';
 
@@ -13,9 +15,9 @@ class JsonRequest {
   String type = "";
   String metadata = "";
 
-  JsonRequest(String body, String peer, String type, String metadata) {
+  JsonRequest(String body, String type, String metadata) {
     this.body = body;
-    this.peer = peer;
+    this.peer = GameManager.instance!.getMyID();
     this.type = type;
     this.metadata = metadata;
   }
@@ -54,8 +56,11 @@ class JsonRequest {
     return new WinRequest.FromString(getRequest());
   }
 
-SequenceRequest getSequenceRequest() {
+  SequenceRequest getSequenceRequest() {
     return new SequenceRequest.FromString(getRequest());
   }
 
+  ScoreRequest getScoreRequest() {
+    return new ScoreRequest.FromString(getRequest());
+  }
 }
