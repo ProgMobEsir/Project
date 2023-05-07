@@ -73,7 +73,7 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
                 }
                 //random game
                 GameManager.instance!.sendJsonRequest(
-                    new JsonRequest("", "0", "GAME", randomGameName));
+                    new JsonRequest("", "GAME", randomGameName));
 
                 NavigationService.instance
                     .navigateToReplacement("GAME_" + randomGameName);
@@ -83,7 +83,7 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
             ElevatedButton(
               onPressed: () {
                 GameManager.instance!
-                    .sendJsonRequest(new JsonRequest("", "0", "GAME", "SIMON"));
+                    .sendJsonRequest(new JsonRequest("", "GAME", "SIMON"));
 
                 Navigator.pushReplacement(
                   context,
@@ -97,7 +97,7 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
             ElevatedButton(
               onPressed: () {
                 GameManager.instance!
-                    .sendJsonRequest(new JsonRequest("", "0", "GAME", "DRAG"));
+                    .sendJsonRequest(new JsonRequest("", "GAME", "DRAG"));
 
                 Navigator.pushReplacement(
                   context,

@@ -60,6 +60,7 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
             //et la un bouton de play
             ElevatedButton(
               onPressed: () {
+                setState(() {});
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -75,6 +76,7 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
                 backgroundColor: MaterialStateProperty.all(Colors.green),
               ),
               onPressed: () async {
+                setState(() {});
                 bool? created = await GameManager
                     .instance?.flutterP2pConnectionPlugin
                     .createGroup(); // button
@@ -88,6 +90,7 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
                 backgroundColor: MaterialStateProperty.all(Colors.red),
               ),
               onPressed: () async {
+                setState(() {});
                 bool? removed = await GameManager
                     .instance?.flutterP2pConnectionPlugin
                     .removeGroup(); //3
@@ -97,6 +100,7 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
             ),
             ElevatedButton(
               onPressed: () async {
+                setState(() {});
                 var info = await GameManager
                     .instance?.flutterP2pConnectionPlugin
                     .groupInfo(); //button
@@ -137,12 +141,14 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
 
             ElevatedButton(
               onPressed: () async {
+                setState(() {});
                 GameManager.instance!.startSocket();
               },
               child: const Text("open the room"), // button 5
             ),
             ElevatedButton(
               onPressed: () async {
+                setState(() {});
                 GameManager.instance!.closeSocketConnection();
               },
               child: const Text("close the room"),

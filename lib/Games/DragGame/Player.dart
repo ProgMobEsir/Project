@@ -1,5 +1,4 @@
 import 'package:wifi_direct_json/GameEngine/GameObject.dart';
-import 'package:wifi_direct_json/GameEngine/shapes/Rectangle.dart';
 
 import '../../GameEngine/Camera.dart';
 
@@ -14,8 +13,8 @@ class Player extends GameObject {
   }
   // ...
   void update() {
-    Camera.dx = transform.position.x -200;
-    Camera.dy = transform.position.y -200;
+    Camera.dx = transform.position.x - 200;
+    Camera.dy = transform.position.y - 200;
     // ...
   }
 }

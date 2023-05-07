@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:wifi_direct_json/GameEngine/GameObject.dart';
 import 'package:wifi_direct_json/GameEngine/shapes/ImageRenderer.dart';
-import 'package:wifi_direct_json/GameEngine/shapes/Rectangle.dart';
 
 class Food extends GameObject {
   Food(x, y) {

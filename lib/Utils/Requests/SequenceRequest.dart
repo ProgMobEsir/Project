@@ -4,8 +4,8 @@ import 'JsonRequest.dart';
 
 class SequenceRequest extends JsonRequest {
   String sequence = "";
-  SequenceRequest(this.sequence, peer)
-      : super('{"seq":"$sequence"}', peer, "sequence", "");
+  SequenceRequest(this.sequence)
+      : super('{"seq":"$sequence"}', "sequence", "");
 
   SequenceRequest.FromString(String s) : super.FromString(s) {
     var jsonDecoded = JsonDecoder().convert(body);

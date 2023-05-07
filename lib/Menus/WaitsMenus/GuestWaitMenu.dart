@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
-import 'GameMenu.dart';
-import 'ConnPage.dart';
-import '/Utils/GameMods.dart';
 import '/Utils/GameManager.dart';
 
-class WaitMenu extends StatefulWidget {
-  const WaitMenu({super.key});
+class GuestWaitMenu extends StatefulWidget {
+  final String message;
+  const GuestWaitMenu({super.key, required this.message});
 
   @override
-  State<WaitMenu> createState() => _WaitMenuState();
+  State<GuestWaitMenu> createState() => _GuestWaitMenuState();
 }
 
-class _WaitMenuState extends State<WaitMenu> with WidgetsBindingObserver {
+class _GuestWaitMenuState extends State<GuestWaitMenu>
+    with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +19,7 @@ class _WaitMenuState extends State<WaitMenu> with WidgetsBindingObserver {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(widget.message),
             const Text(
               'Wait for the host to choose the next game !',
               //generate a line to add padding to the text

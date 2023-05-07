@@ -4,8 +4,7 @@ import 'package:wifi_direct_json/GameEngine/colliders/RectCollider.dart';
 import 'package:wifi_direct_json/Games/DragGame/Player.dart';
 import 'package:wifi_direct_json/Games/DragGame/food.dart';
 import 'package:wifi_direct_json/Games/DragGame/guest.dart';
-import 'package:wifi_direct_json/Menus/ConnPage.dart';
-import 'package:wifi_direct_json/Menus/GameMenu.dart';
+import 'package:wifi_direct_json/Menus/WaitsMenus/GuestWaitMenu.dart';
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/WinRequest.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
@@ -29,7 +28,7 @@ class DragGameState extends GameState<DragGame> {
 
   var spawnRate = 100;
 
-  var mapSize = [1000,1000];
+  var mapSize = [1000, 1000];
 
   var joyX = 0.0;
   var joyY = 0.0;
@@ -38,6 +37,7 @@ class DragGameState extends GameState<DragGame> {
   void initState() {
     super.initState();
     initGame();
+    AudioManager.getInstance().playMusic("intro.mp3");
   }
 
   @override
@@ -59,8 +59,11 @@ class DragGameState extends GameState<DragGame> {
       }
     }
     if (request.type == "win") {
+      wined = false;
+      winner = request.getWinRequest().peer;
+      AudioManager.getInstance().stop();
       AudioManager.getInstance().playEffect("loose.mp3");
-      
+
       onWin();
     }
   }
@@ -82,7 +85,8 @@ class DragGameState extends GameState<DragGame> {
               IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  NavigationService.instance.navigateTo("GAMES");
+                  this.stop();
+                  NavigationService.instance.navigateToReplacement("GAMES");
                 },
               ),
             ],
@@ -122,7 +126,7 @@ class DragGameState extends GameState<DragGame> {
   }
 
   sendPosition(int dx, int dy) {
-    send(new PositionRequest(dx.toDouble(), dy.toDouble(), "0"));
+    send(new PositionRequest(dx.toDouble(), dy.toDouble()));
   }
 
   Player player = new Player(100.0, 100.0);
@@ -136,20 +140,19 @@ class DragGameState extends GameState<DragGame> {
     engine.addGameObject(guest);
   }
 
-  void boundPlayer(){
-    if (player.transform.position.x > mapSize[0]/2) {
-      player.transform.position.x = mapSize[0]/2;
+  void boundPlayer() {
+    if (player.transform.position.x > mapSize[0] / 2) {
+      player.transform.position.x = mapSize[0] / 2;
     }
-    if (player.transform.position.x < -mapSize[0]/2) {
-      player.transform.position.x = -mapSize[0]/2;
+    if (player.transform.position.x < -mapSize[0] / 2) {
+      player.transform.position.x = -mapSize[0] / 2;
     }
-    if (player.transform.position.y > mapSize[1]/2) {
-      player.transform.position.y = mapSize[1]/2;
+    if (player.transform.position.y > mapSize[1] / 2) {
+      player.transform.position.y = mapSize[1] / 2;
     }
-    if (player.transform.position.y < -mapSize[1]/2) {
-      player.transform.position.y = -mapSize[1]/2;
+    if (player.transform.position.y < -mapSize[1] / 2) {
+      player.transform.position.y = -mapSize[1] / 2;
     }
-
   }
 
   @override
@@ -157,14 +160,14 @@ class DragGameState extends GameState<DragGame> {
     super.update();
 
     if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true &&
-      this.frames % spawnRate == 0) {
+        this.frames % spawnRate == 0) {
       //get the size of the screen in pixel
-      var x = Random().nextInt(mapSize[0]) - mapSize[0]/2;
-      var y = Random().nextInt(mapSize[1]) - mapSize[1]/2;
+      var x = Random().nextInt(mapSize[0]) - mapSize[0] / 2;
+      var y = Random().nextInt(mapSize[1]) - mapSize[1] / 2;
       var food = new Food(x.toDouble(), y.toDouble());
       foods.add(food);
       engine.addGameObject(food);
-      send(new InstanciationRequest(x.toDouble(), y.toDouble(), "food", "0"));
+      send(new InstanciationRequest(x.toDouble(), y.toDouble(), "food"));
     }
 
     player.transform.position.x += joyX * player.speed;
@@ -172,16 +175,17 @@ class DragGameState extends GameState<DragGame> {
 
     List<Food> toRemove = [];
     for (var food in foods) {
-      if (player.collider.isCollidingRectCollider(food.collider as RectCollider)) {
+      if (player.collider
+          .isCollidingRectCollider(food.collider as RectCollider)) {
         print("food eaten");
         player.foodEaten += 1;
         food.destroy();
         toRemove.add(food);
         AudioManager.getInstance().playEffect("powerup.mp3");
-
       }
 
-      if (guest.collider.isCollidingRectCollider(food.collider as RectCollider)) {
+      if (guest.collider
+          .isCollidingRectCollider(food.collider as RectCollider)) {
         print("food eaten");
         guest.foodEaten += 1;
         food.destroy();
@@ -191,7 +195,8 @@ class DragGameState extends GameState<DragGame> {
 
     foods.removeWhere((element) => toRemove.contains(element));
 
-    if (guest.collider.isCollidingRectCollider(player.collider as RectCollider)) {
+    if (guest.collider
+        .isCollidingRectCollider(player.collider as RectCollider)) {
       player.renderer.color = Color.fromARGB(255, 216, 73, 255);
       guest.renderer.color = new Color(0xFF00FF00);
     } else {
@@ -204,22 +209,10 @@ class DragGameState extends GameState<DragGame> {
 
     //si le score est de 10, on arrete le jeu
     if (player.foodEaten == 10) {
-      AudioManager.getInstance().playEffect("win.mp3");
+      player.foodEaten = 0;
+      AudioManager.getInstance().playMusic("win.mp3");
+      wined = true;
       onWin();
-    }
-  }
-
-  onWin() {
-    dispatchOnWin();
-    this.stop();
-    send(new WinRequest(true, "0"));
-  }
-
-  dispatchOnWin() {
-    if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) { 
-      NavigationService.instance.navigateTo("GAMES");
-    } else {
-      NavigationService.instance.navigateTo("WAIT");
     }
   }
 }

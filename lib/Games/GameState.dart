@@ -1,9 +1,13 @@
 import 'dart:async';
-import 'dart:ffi';
-
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/Utils/Requests/ScoreRequest.dart';
 import '../GameEngine/Engine.dart';
+import '../Menus/WaitsMenus/GuestWaitMenu.dart';
+import '../Menus/WaitsMenus/HostWaitMenu.dart';
+import '../Utils/AudioManager.dart';
 import '../Utils/Requests/JsonRequest.dart';
+import '../Utils/Requests/WinRequest.dart';
+
 import '/Utils/Reciever.dart';
 
 import '/Utils/GameManager.dart';
@@ -12,6 +16,8 @@ class GameState<T extends StatefulWidget> extends State<T>
     with WidgetsBindingObserver, Reciever {
   GameEngine engine = GameEngine();
 
+  String winner = "";
+  bool wined = false;
   late Timer timer;
   bool run = true;
   int frames = 0;
@@ -36,8 +42,8 @@ class GameState<T extends StatefulWidget> extends State<T>
   @override
   void dispose() {
     super.dispose();
+    AudioManager.getInstance().stop();
     stop();
-
     print("unsubscribed");
   }
 
@@ -68,4 +74,46 @@ class GameState<T extends StatefulWidget> extends State<T>
   }
 
   void update() {}
+
+  dispatchOnWin() {
+    if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) {
+      wined ? GameManager.instance!.scores["HOST"] += 1 : {};
+
+      //send(new ScoreRequest(GameManager.instance!.scores));
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          // ignore: prefer_const_constructors
+          builder: (_) => HostWaitMenu(
+            message: wined ? "You win !" : "You loose !",
+          ),
+        ),
+      );
+    } else {
+      print(winner);
+      wined ? GameManager.instance!.scores[winner] += 1 : {};
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          // ignore: prefer_const_constructors
+          builder: (_) => GuestWaitMenu(
+            message: wined ? "You win !" : "You loose !",
+          ),
+        ),
+      );
+    }
+  }
+
+  onLoose() {
+    this.stop();
+    dispatchOnWin();
+    send(new WinRequest(false));
+  }
+
+  onWin() {
+    this.stop();
+    dispatchOnWin();
+    send(new WinRequest(true));
+  }
 }
