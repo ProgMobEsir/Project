@@ -4,9 +4,8 @@ import 'package:wifi_direct_json/GameEngine/colliders/RectCollider.dart';
 import 'package:wifi_direct_json/Games/DragGame/Player.dart';
 import 'package:wifi_direct_json/Games/DragGame/food.dart';
 import 'package:wifi_direct_json/Games/DragGame/guest.dart';
-import 'package:wifi_direct_json/Menus/WaitsMenus/GuestWaitMenu.dart';
+import 'package:wifi_direct_json/Utils/GameMods.dart';
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
-import 'package:wifi_direct_json/Utils/Requests/WinRequest.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
 import '../../Utils/AudioManager.dart';
 import '../../Utils/GameManager.dart';
@@ -43,7 +42,6 @@ class DragGameState extends GameState<DragGame> {
   @override
   void onRecieve(JsonRequest request) {
     super.onRecieve(request);
-    data = request.body;
 
     if (request.type == "position") {
       PositionRequest posReq = request.getPositionRequest();
@@ -62,7 +60,7 @@ class DragGameState extends GameState<DragGame> {
       wined = false;
       winner = request.getWinRequest().peer;
       AudioManager.getInstance().stop();
-      AudioManager.getInstance().playEffect("loose.mp3");
+      //AudioManager.getInstance().playEffect("loose.mp3");
 
       onWin();
     }
@@ -155,11 +153,36 @@ class DragGameState extends GameState<DragGame> {
     }
   }
 
+  nearestFood(foods, player) {
+    double min = 1000000.0;
+    Food minFood =
+        new Food(player.transform.position.x, player.transform.position.y);
+
+    for (var food in foods) {
+      var dist =
+          (food.transform.position.x - player.transform.position.x).abs() +
+              (food.transform.position.y - player.transform.position.y).abs();
+      if (dist < min) {
+        min = dist;
+        minFood = food;
+      }
+    }
+    return minFood;
+  }
+
   @override
   update() {
     super.update();
 
-    if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true &&
+    if (GameManager.instance!.gameMode == GameMode.Solo) {
+      guest.transform.position +=
+          (nearestFood(foods, player).transform.position -
+                  guest.transform.position) *
+              0.007;
+    }
+
+    if ((GameManager.instance!.wifiP2PInfo?.isGroupOwner == true ||
+            GameManager.instance!.gameMode == GameMode.Solo) &&
         this.frames % spawnRate == 0) {
       //get the size of the screen in pixel
       var x = Random().nextInt(mapSize[0]) - mapSize[0] / 2;
@@ -207,12 +230,32 @@ class DragGameState extends GameState<DragGame> {
     sendPosition(player.transform.position.x.toInt(),
         player.transform.position.y.toInt());
 
-    //si le score est de 10, on arrete le jeu
-    if (player.foodEaten == 10) {
-      player.foodEaten = 0;
-      AudioManager.getInstance().playMusic("win.mp3");
-      wined = true;
-      onWin();
+    if (GameManager.instance!.gameMode == GameMode.Solo) {
+      if (guest.foodEaten == 10) {
+        onSoloLoose();
+      } else if (player.foodEaten == 10) {
+        onSoloWin();
+      }
+    } else {
+      if (player.foodEaten == 10) {
+        player.foodEaten = 0;
+        //AudioManager.getInstance().playMusic("win.mp3");
+        wined = true;
+        winner = GameManager.instance!.getMyID();
+        onWin();
+      }
     }
+  }
+
+  onSoloLoose() {
+    this.stop();
+    goToWaitMenu(false, "you ate " + player.foodEaten.toString() + " foods");
+  }
+
+  onSoloWin() {
+    player.foodEaten = 0;
+    guest.foodEaten = 0;
+    this.stop();
+    goToWaitMenu(true, "you won in  " + 0.toString() + " seconds");
   }
 }

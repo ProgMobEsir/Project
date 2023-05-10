@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:math';
+import 'package:wifi_direct_json/Utils/GameMods.dart';
+
 import '../../Utils/AudioManager.dart';
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/Utils/Requests/SequenceRequest.dart';
@@ -18,6 +21,7 @@ class SuperSimon extends StatefulWidget {
 }
 
 class SuperSimonState extends GameState<SuperSimon> {
+  var nbTurns = 0;
   var sequence = [];
   var currentSequence = -1;
   var currentGuess = 0;
@@ -40,11 +44,15 @@ class SuperSimonState extends GameState<SuperSimon> {
   @override
   void initState() {
     super.initState();
-
-    if (GameManager.instance?.wifiP2PInfo?.isGroupOwner == true) {
-      setMode(Mode.write);
-    } else {
+    if (GameManager.instance?.gameMode == GameMode.Solo) {
       setMode(Mode.wait);
+      iaPlayTurn();
+    } else {
+      if (GameManager.instance?.wifiP2PInfo?.isGroupOwner == true) {
+        setMode(Mode.write);
+      } else {
+        setMode(Mode.wait);
+      }
     }
   }
 
@@ -60,8 +68,8 @@ class SuperSimonState extends GameState<SuperSimon> {
     }
     if (req.type == "win") {
       wined = true;
-      winner = req.getWinRequest().peer;
-      dispatchOnWin();
+      winner = GameManager.instance!.getMyID();
+      dispatchOnEnd(false);
     }
   }
 
@@ -170,8 +178,20 @@ class SuperSimonState extends GameState<SuperSimon> {
 
   sendSequence() {
     var formedSeq = sequence.join(",");
-    send(new SequenceRequest(formedSeq));
-    setMode(Mode.wait);
+    if (GameManager.instance?.gameMode == GameMode.Solo) {
+    } else {
+      send(new SequenceRequest(formedSeq));
+      setMode(Mode.wait);
+    }
+  }
+
+  iaPlayTurn() {
+    nbTurns++;
+    Timer(Duration(seconds: 1), () {
+      sequence.add((1 + Random().nextInt(4)).toString());
+      playSequence();
+      setMode(Mode.guess);
+    });
   }
 
   void onButtonPushed(int button) {
@@ -179,14 +199,26 @@ class SuperSimonState extends GameState<SuperSimon> {
       if (button.toString() == sequence[currentGuess]) {
         if (currentGuess == sequence.length - 1) {
           currentGuess = 0;
-          setMode(Mode.write);
+          if (GameManager.instance?.gameMode == GameMode.Solo) {
+            if (nbTurns == 10) {
+              onSoloWin();
+            }
+            setMode(Mode.wait);
+            iaPlayTurn();
+          } else {
+            setMode(Mode.write);
+          }
         } else {
           setState(() {
             currentGuess++;
           });
         }
       } else {
-        onLoose();
+        if (GameManager.instance?.gameMode == GameMode.Solo) {
+          onSoloLoose();
+        } else {
+          onLoose();
+        }
       }
     } else if (mode == Mode.write) {
       sequence.add(button.toString());
@@ -225,17 +257,30 @@ class SuperSimonState extends GameState<SuperSimon> {
     }
   }
 
+  onSoloLoose() {
+    seqTimer.cancel();
+    this.stop();
+    goToWaitMenu(false, "you played " + nbTurns.toString() + " turns");
+  }
+
+  onSoloWin() {
+    seqTimer.cancel();
+    this.stop();
+    goToWaitMenu(true, "you played " + nbTurns.toString() + " turns");
+  }
+
   onWin() {
     seqTimer.cancel();
     this.stop();
-    dispatchOnWin();
+    dispatchOnEnd(false);
     send(new WinRequest(true));
   }
 
   onLoose() {
+    winner = "ALL";
     seqTimer.cancel();
     this.stop();
-    dispatchOnWin();
+    dispatchOnEnd(true);
     send(new WinRequest(false));
   }
 }

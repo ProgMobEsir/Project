@@ -113,7 +113,6 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
               onPressed: () {
                 GameManager.instance!
                     .sendJsonRequest(new JsonRequest("", "GAME", "ACCEL"));
-
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(

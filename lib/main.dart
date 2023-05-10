@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wifi_direct_json/Games/Accel/AccelGame.dart';
 import 'package:wifi_direct_json/Games/DragGame/DragGame.dart';
 import 'package:wifi_direct_json/Games/SimonGame/SuperSimon.dart';
 import 'package:wifi_direct_json/Menus/SettingsMenu.dart';
 import 'package:wifi_direct_json/Menus/WaitsMenus/GuestWaitMenu.dart';
-import 'package:wifi_direct_json/Menus/WaitsMenus/HostWaitMenu.dart' as hostWaitMenu;
+import 'package:wifi_direct_json/Menus/WaitsMenus/HostWaitMenu.dart'
+    as hostWaitMenu;
 import '/Menus/HomePage.dart';
 import 'Menus/ClientMenu.dart';
 import 'Menus/GameMenu.dart';
+import 'Menus/NamingMenu.dart';
+import 'Menus/WaitsMenus/WaitingForPlayerMenu.dart';
 import 'navigation/NavigationService.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -21,6 +25,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
+    ]);
     return MaterialApp(
       navigatorKey: NavigationService.instance.navigationKey,
       home: HomePage(),
@@ -35,7 +43,9 @@ class MyApp extends StatelessWidget {
         "WAIT_HOST": (BuildContext context) => hostWaitMenu.HostWaitMenu(
             message: "Waiting for the host to choose the next game !"),
         "SETTINGS": (BuildContext context) => SettingsMenu(),
-        "ACCEL": (BuildContext context) => AccelGame(),
+        "GAME_ACCEL": (BuildContext context) => AccelGame(),
+        "NAMING": (BuildContext context) => NamingMenu(),
+        "WAIT_PLAYERS" :(BuildContext context) => WaitingForPlayerMenu(),
       },
     );
   }
