@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/Games/Accel/AccelGame.dart';
 import 'package:wifi_direct_json/Games/DragGame/DragGame.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
 import '../Utils/Requests/JsonRequest.dart';
@@ -107,6 +108,20 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
                 );
               },
               child: const Text("Game Drag"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                GameManager.instance!
+                    .sendJsonRequest(new JsonRequest("", "GAME", "ACCEL"));
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AccelGame(),
+                  ),
+                );
+              },
+              child: const Text("Game Accel"),
             ),
           ],
         ),

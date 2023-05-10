@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/Games/Accel/AccelGame.dart';
 import 'package:wifi_direct_json/Games/DragGame/DragGame.dart';
 import 'package:wifi_direct_json/Games/SimonGame/SuperSimon.dart';
 import 'package:wifi_direct_json/Menus/SettingsMenu.dart';
 import 'package:wifi_direct_json/Menus/WaitsMenus/GuestWaitMenu.dart';
-import 'package:wifi_direct_json/Menus/WaitsMenus/HostWaitMenu.dart'
-    as hostWaitMenu;
+import 'package:wifi_direct_json/Menus/WaitsMenus/HostWaitMenu.dart' as hostWaitMenu;
 import '/Menus/HomePage.dart';
 import 'Menus/ClientMenu.dart';
 import 'Menus/GameMenu.dart';
@@ -35,9 +35,8 @@ class MyApp extends StatelessWidget {
         "WAIT_HOST": (BuildContext context) => hostWaitMenu.HostWaitMenu(
             message: "Waiting for the host to choose the next game !"),
         "SETTINGS": (BuildContext context) => SettingsMenu(),
+        "ACCEL": (BuildContext context) => AccelGame(),
       },
     );
   }
 }
-
-class HostWaitMenu {}
