@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:wifi_direct_json/Utils/GameManager.dart';
+import 'package:wifi_direct_json/Utils/Requests/NewPeerNameRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/ScoreRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/SequenceRequest.dart';
@@ -62,5 +63,9 @@ class JsonRequest {
 
   ScoreRequest getScoreRequest() {
     return new ScoreRequest.FromString(getRequest());
+  }
+
+  NewPeerNameRequest getNewPeerNameRequest() {
+    return new NewPeerNameRequest.FromString(getRequest());
   }
 }

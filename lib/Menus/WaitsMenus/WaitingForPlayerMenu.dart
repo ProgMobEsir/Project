@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
 import '/Utils/GameManager.dart';
 
-class HostWaitMenu extends StatefulWidget {
-  final String message;
-  const HostWaitMenu({super.key, required this.message});
+class WaitingForPlayerMenu extends StatefulWidget {
+  const WaitingForPlayerMenu({super.key});
 
   @override
-  State<HostWaitMenu> createState() => _HostWaitMenuState();
+  State<WaitingForPlayerMenu> createState() => _WaitingForPlayerMenuState();
 }
 
-class _HostWaitMenuState extends State<HostWaitMenu>
+class _WaitingForPlayerMenuState extends State<WaitingForPlayerMenu>
     with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
@@ -19,22 +18,7 @@ class _HostWaitMenuState extends State<HostWaitMenu>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'And the winner is..',
-              //generate a line to add padding to the text
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            Text(
-              " " + GameManager.instance!.getLastWinner().toString() + " !",
-              //generate a line to add padding to the text
-              style: TextStyle(
-                fontSize: 30,
-              ),
-            ),
-            Text(widget.message),
-            Text(
+            const Text(
               'click next to choose the next game !',
               //generate a line to add padding to the text
               style: TextStyle(
@@ -42,14 +26,24 @@ class _HostWaitMenuState extends State<HostWaitMenu>
               ),
             ),
             Text(
-              "Scores " + GameManager.instance!.scores.toString(),
+              "Players :" + GameManager.instance!.players.toString(),
               textAlign: TextAlign.center,
             ),
             ElevatedButton(
               onPressed: () {
-                NavigationService.instance.navigateToReplacement('GAMES');
+                setState(() {});
+
+                GameManager.instance!.manageScores();
+                
               },
-              child: const Text('Next'),
+              child: const Text('ReloadPlayerList'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                NavigationService.instance.navigateToReplacement('GAMES');
+                GameManager.instance!.manageScores();
+              },
+              child: const Text('Start'),
             ),
           ],
         ),

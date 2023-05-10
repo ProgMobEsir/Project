@@ -5,6 +5,7 @@ import '../Menus/WaitsMenus/GuestWaitMenu.dart';
 import '../Menus/WaitsMenus/HostWaitMenu.dart';
 import '../Utils/AudioManager.dart';
 import '../Utils/Requests/JsonRequest.dart';
+import '../Utils/Requests/ScoreRequest.dart';
 import '../Utils/Requests/WinRequest.dart';
 import '/Utils/Reciever.dart';
 import '/Utils/GameManager.dart';
@@ -72,9 +73,35 @@ class GameState<T extends StatefulWidget> extends State<T>
 
   void update() {}
 
-  dispatchOnWin() {
+  void goToWaitMenu(bool win, String message) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        // ignore: prefer_const_constructors
+        builder: (_) => HostWaitMenu(
+          message: win ? "You win ! " + message : "You loose ! " + message,
+        ),
+      ),
+    );
+  }
+
+  dispatchOnEnd(bool hostIsLoosing) {
     if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) {
-      wined ? GameManager.instance!.scores["HOST"] += 1 : {};
+      if (hostIsLoosing) {
+        // pour chaques joueurs dans la liste des joueurs si le joueur n'est pas le joueur actuel alors on +=1
+
+        for (var i = 0; i < GameManager.instance!.players.length; i++) {
+          if (GameManager.instance!.players[i] !=
+              GameManager.instance!.getMyID()) {
+            GameManager.instance!.scores[GameManager.instance!.players[i]] += 1;
+            GameManager.instance!.setLastWinner(GameManager.instance!.players[i]);
+          }
+        }
+      } else {
+        GameManager.instance!.setLastWinner(winner);
+        GameManager.instance!.scores[winner] += 1;
+      }
+      //set the new score
 
       //send(new ScoreRequest(GameManager.instance!.scores));
 
@@ -88,8 +115,6 @@ class GameState<T extends StatefulWidget> extends State<T>
         ),
       );
     } else {
-      print(winner);
-      wined ? GameManager.instance!.scores[winner] += 1 : {};
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -104,13 +129,13 @@ class GameState<T extends StatefulWidget> extends State<T>
 
   onLoose() {
     this.stop();
-    dispatchOnWin();
+    dispatchOnEnd(true);
     send(new WinRequest(false));
   }
 
   onWin() {
     this.stop();
-    dispatchOnWin();
+    dispatchOnEnd(false);
     send(new WinRequest(true));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'GameMenu.dart';
+import 'package:wifi_direct_json/Menus/NamingMenu.dart';
+import '../Utils/Requests/JsonRequest.dart';
 import 'ConnPage.dart';
 
 import '/Utils/GameManager.dart';
@@ -61,10 +62,12 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
             ElevatedButton(
               onPressed: () {
                 setState(() {});
+                GameManager.instance!
+                    .sendJsonRequest(new JsonRequest("", "MENU", "NAMING"));
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const GameMenu(),
+                    builder: (context) => const NamingMenu(),
                   ),
                 );
               },

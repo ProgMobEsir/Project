@@ -3,15 +3,19 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 import 'package:wifi_direct_json/Utils/Requests/JsonRequest.dart';
+import 'package:wifi_direct_json/Utils/Requests/NewPeerNameRequest.dart';
 import '../navigation/NavigationService.dart';
 import '/Utils/Reciever.dart';
 import '/Utils/GameMods.dart';
 
 class GameManager {
+  var lastWinner = "";
+
+  var playerName = "";
+
+  List<String> players = [];
+
   GameMode gameMode = GameMode.Solo;
-
-  String id = "";
-
   var scores = {};
 
   List<DiscoveredPeers> peers = [];
@@ -64,6 +68,19 @@ class GameManager {
 
   void parseRequest(JsonRequest jsonReq) {
     //set the request in a table
+
+    if (jsonReq.type == "newPeerName") {
+      NewPeerNameRequest newPeerNameRequest = jsonReq.getNewPeerNameRequest();
+      players.add(newPeerNameRequest.name);
+      print("new player connected ! " + newPeerNameRequest.name);
+    }
+
+    if (jsonReq.type == "MENU") {
+      if (jsonReq.metadata == "NAMING") {
+        NavigationService.instance.navigateToReplacement("NAMING");
+      }
+    }
+
     if (jsonReq.type == "GAME") {
       if (jsonReq.metadata == "SIMON") {
         print("starting simon");
@@ -71,11 +88,33 @@ class GameManager {
       } else if (jsonReq.metadata == "DRAG") {
         print("starting agar");
         NavigationService.instance.navigateToReplacement("GAME_DRAG");
+      } else if (jsonReq.metadata == "ACCEL") {
+        print("starting agar");
+        NavigationService.instance.navigateToReplacement("GAME_ACCEL");
       }
     }
     if (jsonReq.type == "scores") {
       scores = {1: 2};
     }
+  }
+
+  void manageScores() {
+    scores = {};
+    for (var player in players) {
+      scores[player] = 0;
+    }
+  }
+
+  void setLastWinner(String winner) {
+    lastWinner = winner;
+  }
+
+  String? getLastWinner() {
+    return lastWinner;
+  }
+
+  void resetPlayers() {
+    players = [];
   }
 
   void init() async {
@@ -101,15 +140,6 @@ class GameManager {
     await _flutterP2pConnectionPlugin.removeGroup();
 
     bool? discovering = await _flutterP2pConnectionPlugin.discover();
-
-    for (var interface in await NetworkInterface.list()) {
-      for (var addr in interface.addresses) {
-        // Check if the address is an IPv4 and not a loopback address
-        if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
-          id = addr.address;
-        }
-      }
-    }
   }
 
   Future startSocket() async {
@@ -119,12 +149,7 @@ class GameManager {
         downloadPath: "/storage/emulated/0/Download/",
         maxConcurrentDownloads: 2,
         deleteOnError: true,
-        onConnect: (name, address) {
-          if (scores.isEmpty) {
-            scores["HOST"] = 0;
-          }
-          scores[address] = 0;
-        },
+        onConnect: (name, address) {},
         transferUpdate: (transfer) {
           if (transfer.completed) {}
           print(
@@ -169,13 +194,11 @@ class GameManager {
   }
 
   Future sendJsonRequest(JsonRequest toSend) async {
-    //get the adress of the current device add it to the request
-    toSend.peer = wifiP2PInfo!.groupOwnerAddress;
-
     _flutterP2pConnectionPlugin.sendStringToSocket(toSend.getRequest());
   }
 
   String getMyID() {
-    return id;
+    print("my id is " + playerName);
+    return playerName;
   }
 }
