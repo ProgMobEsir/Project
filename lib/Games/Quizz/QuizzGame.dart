@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:wifi_direct_json/Utils/GameMods.dart';
+import 'package:wifi_direct_json/Utils/Requests/QuestionRequest.dart';
 
 import '../../Utils/AudioManager.dart';
 import 'package:flutter/material.dart';
@@ -13,62 +14,39 @@ import '../GameState.dart';
 
 enum Mode { write, guess, wait }
 
-class SuperSimon extends StatefulWidget {
-  const SuperSimon({super.key});
+class QuizzGame extends StatefulWidget {
+  const QuizzGame({super.key});
 
   @override
-  State<SuperSimon> createState() => SuperSimonState();
+  State<QuizzGame> createState() => QuizzGameState();
 }
 
-class SuperSimonState extends GameState<SuperSimon> {
-  var nbTurns = 0;
-  var sequence = [];
-  var currentSequence = -1;
-  var currentGuess = 0;
-  var mode = Mode.write;
-  var modeMessage = "";
-
-  void setMode(Mode m) {
-    mode = m;
-    if (mode == Mode.write) {
-      modeMessage = "Write the sequence";
-    }
-    if (mode == Mode.guess) {
-      modeMessage = "Guess the sequence";
-    }
-    if (mode == Mode.wait) {
-      modeMessage = "Wait for the other player";
-    }
-  }
+class QuizzGameState extends GameState<QuizzGame> {
+  String questionText = "";
+  List<String> answers = [];
+  int nbCorrect = 0;
+  int currentIndex = 0;
+  var questions = {};
+  bool answered  = false; 
 
   @override
   void initState() {
     super.initState();
-    if (GameManager.instance?.gameMode == GameMode.Solo) {
-      setMode(Mode.wait);
-      iaPlayTurn();
-    } else {
-      if (GameManager.instance?.wifiP2PInfo?.isGroupOwner == true) {
-        setMode(Mode.write);
-      } else {
-        setMode(Mode.wait);
-      }
-    }
+    setNextQuestion();
   }
 
   @override
   void onRecieve(JsonRequest req) {
     super.onRecieve(req);
+    if (req.type == "questions"){
+      QuestionRequest qreq = req.getQuestionRequest();
+      questions = qreq.questions;
 
-    if (req.type == "sequence") {
-      String seq = req.getSequenceRequest().sequence;
-      sequence = seq.split(",");
-      playSequence();
-      setMode(Mode.guess);
     }
+
     if (req.type == "win") {
       wined = true;
-      winner = GameManager.instance!.getMyID();
+      winner = req.peer;
       dispatchOnEnd(false);
     }
   }
@@ -99,16 +77,14 @@ class SuperSimonState extends GameState<SuperSimon> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                modeMessage,
+                questionText,
                 style: const TextStyle(fontSize: 20),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    key: const Key('bt1'),
                     onPressed: () {
-                      AudioManager.getInstance().playEffect("beep1.mp3");
                       setState(() {
                         onButtonPushed(1);
                       });
@@ -117,13 +93,11 @@ class SuperSimonState extends GameState<SuperSimon> {
                       primary: getButtonColor(1),
                     ),
                     child: Text(
-                      '1',
+                      answers[0],
                     ),
                   ),
                   ElevatedButton(
-                    key: const Key('bt3'),
                     onPressed: () {
-                      AudioManager.getInstance().playEffect("beep3.mp3");
                       setState(() {
                         onButtonPushed(3);
                       });
@@ -132,16 +106,15 @@ class SuperSimonState extends GameState<SuperSimon> {
                       primary: getButtonColor(3),
                     ),
                     child: Text(
-                      '3',
+                      answers[1],
                     ),
                   ),
                 ],
               ),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 ElevatedButton(
-                  key: const Key('bt2'),
+                  
                   onPressed: () {
-                    AudioManager.getInstance().playEffect("beep2.mp3");
                     setState(() {
                       onButtonPushed(2);
                     });
@@ -150,13 +123,11 @@ class SuperSimonState extends GameState<SuperSimon> {
                     primary: getButtonColor(2),
                   ),
                   child: Text(
-                    '2',
+                    answers[2],
                   ),
                 ),
                 ElevatedButton(
-                  key: const Key('bt4'),
                   onPressed: () {
-                    AudioManager.getInstance().playEffect("beep4.mp3");
                     setState(() {
                       onButtonPushed(4);
                     });
@@ -165,10 +136,24 @@ class SuperSimonState extends GameState<SuperSimon> {
                     primary: getButtonColor(4),
                   ),
                   child: Text(
-                    '4',
+                    answers[3],
                   ),
                 ),
               ]),
+                if (answered ) ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      setNextQuestion();
+                      answered = false;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
+                  ),
+                  child: Text(
+                    "Next question",
+                  ),
+                ),
             ],
           ),
         ),
@@ -176,111 +161,57 @@ class SuperSimonState extends GameState<SuperSimon> {
     );
   }
 
-  sendSequence() {
-    var formedSeq = sequence.join(",");
-    if (GameManager.instance?.gameMode == GameMode.Solo) {
-    } else {
-      send(new SequenceRequest(formedSeq));
-      setMode(Mode.wait);
-    }
-  }
-
-  iaPlayTurn() {
-    nbTurns++;
-    Timer(Duration(seconds: 1), () {
-      sequence.add((1 + Random().nextInt(4)).toString());
-      playSequence();
-      setMode(Mode.guess);
-    });
-  }
 
   void onButtonPushed(int button) {
-    if (mode == Mode.guess) {
-      if (button.toString() == sequence[currentGuess]) {
-        if (currentGuess == sequence.length - 1) {
-          currentGuess = 0;
-          if (GameManager.instance?.gameMode == GameMode.Solo) {
-            if (nbTurns == 4) {
-              onSoloWin();
-            }
-            setMode(Mode.wait);
-            iaPlayTurn();
-          } else {
-            setMode(Mode.write);
-          }
-        } else {
-          setState(() {
-            currentGuess++;
-          });
-        }
-      } else {
-        if (GameManager.instance?.gameMode == GameMode.Solo) {
-          onSoloLoose();
-        } else {
-          onLoose();
-        }
-      }
-    } else if (mode == Mode.write) {
-      sequence.add(button.toString());
-      sendSequence();
-      mode = Mode.wait;
+    answered = true;
+    if (button == getValidAnswerButton()){
+      nbCorrect++;
     }
   }
 
-  var textSeq = "";
-  var seqTimer;
-  playSequence() {
-    for (var i = 0; i <= sequence.length; i++) {
-      seqTimer = Timer(Duration(seconds: i), () {
-        if (i < sequence.length && seqTimer.isActive) {
-          textSeq = sequence[i];
+  int getValidAnswerButton(){
+    return 1;
+  }
 
-          AudioManager.getInstance().playEffect("beep" + sequence[i] + ".mp3");
-          setState(() {
-            currentSequence = int.parse(textSeq);
-          });
-        } else {
-          textSeq = "";
-          setState(() {
-            currentSequence = -1;
-          });
-        }
-      });
+  void setNextQuestion(){
+    if (currentIndex < questions.length){
+      currentIndex++;
+      var question = questions[currentIndex];
+      questionText = question["question"];
+      answers = question["answers"];
+    }
+    else {
+      onWin();
     }
   }
+
 
   Color getButtonColor(int button) {
-    if (currentSequence == button) {
-      return Colors.green;
-    } else {
       return Colors.blue;
-    }
   }
 
   onSoloLoose() {
-    seqTimer.cancel();
+  
     this.stop();
     winner = "IA";
-    goToWaitMenu(false, "you played " + nbTurns.toString() + " turns");
+    goToWaitMenu(false, "stop");
   }
 
   onSoloWin() {
-    seqTimer.cancel();
+
     winner = GameManager.instance!.getMyID();
     this.stop();
-    goToWaitMenu(true, "you played " + nbTurns.toString() + " turns");
+    goToWaitMenu(true,"stop");
   }
 
   onWin() {
-    seqTimer.cancel();
+    
     this.stop();
     dispatchOnEnd(false);
     send(new WinRequest(true));
   }
 
   onLoose() {
-    winner = "ALL";
-    seqTimer.cancel();
     this.stop();
     dispatchOnEnd(true);
     send(new WinRequest(false));

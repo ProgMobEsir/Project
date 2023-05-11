@@ -46,7 +46,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             const Padding(padding: EdgeInsets.all(100)),
             //et la un bouton de play
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                bool? removed = await GameManager
+                    .instance?.flutterP2pConnectionPlugin
+                    .removeGroup(); //3
                 GameManager.instance!.gameMode = GameMode.Solo;
                 Navigator.pushReplacement(
                   context,

@@ -8,6 +8,7 @@ class ScoreRequest extends JsonRequest {
 
   ScoreRequest.FromString(String s) : super.FromString(s) {
     var jsonDecoded = JsonDecoder().convert(body);
+    
     print("SCORES " + jsonDecoded);
     scores = jsonDecoded['scores'];
   }

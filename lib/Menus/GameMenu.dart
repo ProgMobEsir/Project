@@ -93,7 +93,7 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
                   ),
                 );
               },
-              child: const Text("Game Simon"),
+              child: const Text("Simon"),
             ),
             ElevatedButton(
               onPressed: () {
@@ -107,7 +107,7 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
                   ),
                 );
               },
-              child: const Text("Game Drag"),
+              child: const Text("food quest"),
             ),
             ElevatedButton(
               onPressed: () {
@@ -120,7 +120,20 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
                   ),
                 );
               },
-              child: const Text("Game Accel"),
+              child: const Text("Bubble rush"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                GameManager.instance!
+                    .sendJsonRequest(new JsonRequest("", "GAME", "QUIZZ"));
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AccelGame(),
+                  ),
+                );
+              },
+              child: const Text("Quizz"),
             ),
           ],
         ),
