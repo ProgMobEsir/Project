@@ -103,7 +103,7 @@ class GameState<T extends StatefulWidget> extends State<T>
       }
       //set the new score
 
-      //send(new ScoreRequest(GameManager.instance!.scores));
+      send(new ScoreRequest(GameManager.instance!.scores));
 
       Navigator.pushReplacement(
         context,

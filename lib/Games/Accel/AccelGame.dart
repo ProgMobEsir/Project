@@ -72,7 +72,7 @@ class AccelGameState extends GameState<AccelGame> {
     super.initState();
 
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
     ]);
 
     initGame();
@@ -152,7 +152,7 @@ class AccelGameState extends GameState<AccelGame> {
   var bubble = new Bubble(50, 50, 10);
 
   var cible = new Bubble(
-      Random().nextInt(100).toDouble(), Random().nextInt(100).toDouble(), 30);
+      Random().nextInt(200).toDouble(), Random().nextInt(200).toDouble(), 30);
 
   initGame() {
     engine.addGameObject(cible);
@@ -171,25 +171,25 @@ class AccelGameState extends GameState<AccelGame> {
     bubble.transform.position.y += _gyroscopeValues![0] * 5;
 
     //bound the bubble in the screen :
-    if (bubble.transform.position.x > 100) {
-      bubble.transform.position.x = 100;
+    if (bubble.transform.position.x > 200) {
+      bubble.transform.position.x = 200;
     }
-    if (bubble.transform.position.x < -100) {
-      bubble.transform.position.x = -100;
+    if (bubble.transform.position.x < -0) {
+      bubble.transform.position.x = 0;
     }
-    if (bubble.transform.position.y > 100) {
-      bubble.transform.position.y = 100;
+    if (bubble.transform.position.y > 200) {
+      bubble.transform.position.y = 200;
     }
-    if (bubble.transform.position.y < -100) {
-      bubble.transform.position.y = -100;
+    if (bubble.transform.position.y < 0) {
+      bubble.transform.position.y = 0;
     }
 
     var dist = bubble.transform.position - cible.transform.position;
 
     if (dist.length < 40) {
-      cible.transform.position.x = Random().nextInt(200).toDouble() - 100;
+      cible.transform.position.x = Random().nextInt(200).toDouble();
 
-      cible.transform.position.y = Random().nextInt(200).toDouble() - 100;
+      cible.transform.position.y = Random().nextInt(200).toDouble();
       nb += 1;
     }
 

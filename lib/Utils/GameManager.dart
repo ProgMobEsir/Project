@@ -10,8 +10,7 @@ import '/Utils/GameMods.dart';
 
 class GameManager {
   var lastWinner = "";
-
-  var playerName = "";
+  var playerName = "You";
 
   List<String> players = [];
 
@@ -94,7 +93,7 @@ class GameManager {
       }
     }
     if (jsonReq.type == "scores") {
-      scores = {1: 2};
+      scores = jsonReq.getScoreRequest().scores;
     }
   }
 
@@ -198,7 +197,6 @@ class GameManager {
   }
 
   String getMyID() {
-    print("my id is " + playerName);
     return playerName;
   }
 }
