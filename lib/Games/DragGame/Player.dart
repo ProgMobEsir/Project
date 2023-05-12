@@ -8,11 +8,13 @@ class Player extends GameObject {
   Player(x, y) {
     transform.position.x = x;
     transform.position.y = y;
-    transform.scale.x = 50;
+    transform.scale.x = this.foodEaten + 50;
     transform.scale.y = 50;
   }
   // ...
   void update() {
+    transform.scale.x = this.foodEaten + 50;
+    transform.scale.y = this.foodEaten + 50;
     Camera.dx = transform.position.x - 200;
     Camera.dy = transform.position.y - 200;
     // ...

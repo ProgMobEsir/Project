@@ -202,6 +202,7 @@ class DragGameState extends GameState<DragGame> {
           .isCollidingRectCollider(food.collider as RectCollider)) {
         print("food eaten");
         player.foodEaten += 1;
+        
         food.destroy();
         toRemove.add(food);
         AudioManager.getInstance().playEffect("powerup.mp3");

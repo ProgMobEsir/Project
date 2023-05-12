@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/Games/Accel/AccelGame.dart';
 import 'package:wifi_direct_json/Games/DragGame/DragGame.dart';
+import 'package:wifi_direct_json/Games/Quizz/QuizzGame.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
 import '../Utils/Requests/JsonRequest.dart';
 import 'HomePage.dart';
@@ -129,7 +130,7 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AccelGame(),
+                    builder: (context) => const QuizzGame(),
                   ),
                 );
               },

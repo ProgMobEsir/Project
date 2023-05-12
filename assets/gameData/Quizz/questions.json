@@ -1,0 +1,61 @@
+{
+    "quiz": {
+      "questions": [
+        {
+          "id": 1,
+          "question": "Quelle est la capitale de la France ?",
+          "options": {
+            "a": "Lyon",
+            "b": "Paris",
+            "c": "Marseille",
+            "d": "Bordeaux"
+          },
+          "answer": "b"
+        },
+        {
+          "id": 2,
+          "question": "Quel est l'élément chimique représenté par la lettre 'H' ?",
+          "options": {
+            "a": "Hélium",
+            "b": "Hydrogène",
+            "c": "Hafnium",
+            "d": "Holmium"
+          },
+          "answer": "b"
+        },
+        {
+          "id": 3,
+          "question": "Combien y a-t-il de continents sur Terre ?",
+          "options": {
+            "a": "5",
+            "b": "6",
+            "c": "7",
+            "d": "8"
+          },
+          "answer": "c"
+        },
+        {
+          "id": 4,
+          "question": "Quel est le plus long fleuve du monde ?",
+          "options": {
+            "a": "Le Nil",
+            "b": "L'Amazone",
+            "c": "Le Yangtsé",
+            "d": "Le Mississippi"
+          },
+          "answer": "a"
+        },
+        {
+          "id": 5,
+          "question": "Qui a peint La Joconde ?",
+          "options": {
+            "a": "Vincent van Gogh",
+            "b": "Pablo Picasso",
+            "c": "Léonard de Vinci",
+            "d": "Michel-Ange"
+          },
+          "answer": "c"
+        }
+      ]
+    }
+  }

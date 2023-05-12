@@ -50,6 +50,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 bool? removed = await GameManager
                     .instance?.flutterP2pConnectionPlugin
                     .removeGroup(); //3
+
+                    await GameManager.instance?.closeSocketConnection();
+
                 GameManager.instance!.gameMode = GameMode.Solo;
                 Navigator.pushReplacement(
                   context,

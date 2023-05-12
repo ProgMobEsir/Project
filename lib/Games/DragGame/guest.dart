@@ -11,6 +11,8 @@ class Guest extends GameObject {
   }
   // ...
   void update() {
+    transform.scale.x = this.foodEaten + 50;
+    transform.scale.y = this.foodEaten + 50;
     // ...
   }
 }

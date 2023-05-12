@@ -1,11 +1,9 @@
-import 'dart:async';
-import 'dart:math';
-import 'package:wifi_direct_json/Utils/GameMods.dart';
-import 'package:wifi_direct_json/Utils/Requests/QuestionRequest.dart';
+import 'dart:convert';
+import 'dart:io';
 
-import '../../Utils/AudioManager.dart';
+import 'package:flutter/services.dart';
+import 'package:wifi_direct_json/Utils/Requests/QuestionRequest.dart';
 import 'package:flutter/material.dart';
-import 'package:wifi_direct_json/Utils/Requests/SequenceRequest.dart';
 import '../../Utils/GameManager.dart';
 import '../../Utils/Requests/JsonRequest.dart';
 import '../../Utils/Requests/WinRequest.dart';
@@ -26,13 +24,27 @@ class QuizzGameState extends GameState<QuizzGame> {
   List<String> answers = [];
   int nbCorrect = 0;
   int currentIndex = 0;
-  var questions = {};
+  List<dynamic> questions = [];
   bool answered  = false; 
+  var rightAnswer = "";
+
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
-    setNextQuestion();
+    loadQuestions();
+  }
+  loadQuestions() async {
+    // Get a file reference
+    String jsonString = await rootBundle.loadString('assets/gameData/Quizz/questions.json');
+    Map<String, dynamic> jsonData = jsonDecode(jsonString);
+    print(jsonString);
+    questions = jsonData["quiz"]["questions"];
+  try {
+    // Open the file
+  } catch (e) {
+    print('Error reading file: $e');
+  }
   }
 
   @override
@@ -40,8 +52,7 @@ class QuizzGameState extends GameState<QuizzGame> {
     super.onRecieve(req);
     if (req.type == "questions"){
       QuestionRequest qreq = req.getQuestionRequest();
-      questions = qreq.questions;
-
+      questions = qreq.questions["questions"];
     }
 
     if (req.type == "win") {
@@ -49,6 +60,7 @@ class QuizzGameState extends GameState<QuizzGame> {
       winner = req.peer;
       dispatchOnEnd(false);
     }
+
   }
 
   @override
@@ -174,15 +186,18 @@ class QuizzGameState extends GameState<QuizzGame> {
   }
 
   void setNextQuestion(){
-    if (currentIndex < questions.length){
+
+    if (currentIndex == questions.length){
       currentIndex++;
-      var question = questions[currentIndex];
+      print(questions.length);
+      print(questions[0]);
+      var question = questions[0];
+      print(question);
       questionText = question["question"];
-      answers = question["answers"];
+      answers = question["options"];
+      rightAnswer = question["answer"];
     }
-    else {
-      onWin();
-    }
+
   }
 
 

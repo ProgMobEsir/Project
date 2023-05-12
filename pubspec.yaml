@@ -52,7 +52,8 @@ flutter:
   assets:
     - assets/sounds/
     - assets/images/
-
+    - assets/gameData/Quizz/
+    
     
   # To add assets to your application, add an assets section, like this:
   # assets:
