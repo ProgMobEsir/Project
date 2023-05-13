@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'JsonRequest.dart';
 
 class ScoreRequest extends JsonRequest {
-  Map scores = {};
-  ScoreRequest(this.scores) : super('{"scores":"$scores"}', "scores", "");
+  Map<dynamic, dynamic> scores = {};
+  ScoreRequest(Map<dynamic, dynamic> this.scores)
+      : super('{"scores":${JsonEncoder().convert(scores)}}', "scores", "");
 
   ScoreRequest.FromString(String s) : super.FromString(s) {
     var jsonDecoded = JsonDecoder().convert(body);
-    
-    print("SCORES " + jsonDecoded);
-    scores = jsonDecoded['scores'];
+    Map<dynamic, dynamic> s = jsonDecoded['scores'];
+    print(s);
+    scores = s;
   }
 }

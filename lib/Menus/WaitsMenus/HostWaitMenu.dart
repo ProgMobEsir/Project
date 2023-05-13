@@ -47,6 +47,7 @@ class _HostWaitMenuState extends State<HostWaitMenu>
             ),
             ElevatedButton(
               onPressed: () {
+                GameManager.instance!.sendPlayers();
                 NavigationService.instance.navigateToReplacement('GAMES');
               },
               child: const Text('Next'),

@@ -64,7 +64,6 @@ class SuperSimonState extends GameState<SuperSimon> {
       String seq = req.getSequenceRequest().sequence;
       sequence = seq.split(",");
       playSequence();
-      setMode(Mode.guess);
     }
     if (req.type == "win") {
       wined = true;
@@ -240,6 +239,7 @@ class SuperSimonState extends GameState<SuperSimon> {
             currentSequence = int.parse(textSeq);
           });
         } else {
+          setMode(Mode.guess);
           textSeq = "";
           setState(() {
             currentSequence = -1;

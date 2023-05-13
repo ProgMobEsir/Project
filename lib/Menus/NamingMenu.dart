@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wifi_direct_json/Utils/AudioManager.dart';
-import 'package:wifi_direct_json/Utils/ImageLibrary.dart';
 import 'package:wifi_direct_json/Utils/Requests/NewPeerNameRequest.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
-import 'GameMenu.dart';
-import 'ConnPage.dart';
-import '/Utils/GameMods.dart';
+
 import '/Utils/GameManager.dart';
 
 class NamingMenu extends StatefulWidget {
@@ -21,11 +17,12 @@ class _NamingMenuState extends State<NamingMenu> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    GameManager.instance!.resetPlayers();
+    GameManager.instance!.manageScores();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 

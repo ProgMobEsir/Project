@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:wifi_direct_json/Utils/AudioManager.dart';
+import 'package:wifi_direct_json/Utils/GameMods.dart';
 import 'package:wifi_direct_json/Utils/Requests/QuestionRequest.dart';
 import 'package:flutter/material.dart';
+import 'package:wifi_direct_json/Utils/Requests/QuizzEndRequest.dart';
 import '../../Utils/GameManager.dart';
 import '../../Utils/Requests/JsonRequest.dart';
 import '../../Utils/Requests/WinRequest.dart';
@@ -21,46 +24,61 @@ class QuizzGame extends StatefulWidget {
 
 class QuizzGameState extends GameState<QuizzGame> {
   String questionText = "";
-  List<String> answers = [];
+  Map<String, dynamic> answers = {"a": "", "b": "", "c": "", "d": ""};
   int nbCorrect = 0;
   int currentIndex = 0;
   List<dynamic> questions = [];
-  bool answered  = false; 
+  bool answered = false;
   var rightAnswer = "";
-
+  bool otherHasFinished = false;
+  int otherNbCorrect = 0;
 
   @override
-  void initState()  {
+  void initState() {
+    Future.delayed(const Duration(seconds: 1), () {});
+    if (GameManager.instance?.gameMode == GameMode.Solo) {
+      loadQuestions();
+    } else {
+      if (GameManager.instance?.wifiP2PInfo?.isGroupOwner == true) {
+        loadQuestions();
+      }
+    }
     super.initState();
-    loadQuestions();
   }
+
   loadQuestions() async {
     // Get a file reference
-    String jsonString = await rootBundle.loadString('assets/gameData/Quizz/questions.json');
+    String jsonString =
+        await rootBundle.loadString('assets/gameData/Quizz/questions.json');
     Map<String, dynamic> jsonData = jsonDecode(jsonString);
-    print(jsonString);
+    print("Json de questions : " + jsonString);
     questions = jsonData["quiz"]["questions"];
-  try {
-    // Open the file
-  } catch (e) {
-    print('Error reading file: $e');
-  }
+
+    print("questions loaded");
+    setNextQuestion();
+    print("sending questions");
+
+    send(new QuestionRequest(questions));
+
+    print("game setup finished");
   }
 
   @override
   void onRecieve(JsonRequest req) {
     super.onRecieve(req);
-    if (req.type == "questions"){
+    if (req.type == "questions") {
       QuestionRequest qreq = req.getQuestionRequest();
-      questions = qreq.questions["questions"];
-    }
 
-    if (req.type == "win") {
-      wined = true;
-      winner = req.peer;
-      dispatchOnEnd(false);
+      questions = qreq.questions;
+      setNextQuestion();
+    } else if (req.type == "quizzend") {
+      winner = req.getQuizzEndRequest().peer;
+      QuizzEndRequest qreq = req.getQuizzEndRequest();
+      otherNbCorrect = qreq.score;
+      otherHasFinished = true;
+      onEnd();
+      setState(() {});
     }
-
   }
 
   @override
@@ -98,61 +116,61 @@ class QuizzGameState extends GameState<QuizzGame> {
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        onButtonPushed(1);
+                        onButtonPushed("a");
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: getButtonColor(1),
+                      primary: getButtonColor("a"),
                     ),
                     child: Text(
-                      answers[0],
+                      answers["a"],
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        onButtonPushed(3);
+                        onButtonPushed("c");
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: getButtonColor(3),
+                      primary: getButtonColor("c"),
                     ),
                     child: Text(
-                      answers[1],
+                      answers["c"],
                     ),
                   ),
                 ],
               ),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 ElevatedButton(
-                  
                   onPressed: () {
                     setState(() {
-                      onButtonPushed(2);
+                      onButtonPushed("b");
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: getButtonColor(2),
+                    primary: getButtonColor("b"),
                   ),
                   child: Text(
-                    answers[2],
+                    answers["b"],
                   ),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      onButtonPushed(4);
+                      onButtonPushed("d");
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: getButtonColor(4),
+                    primary: getButtonColor("d"),
                   ),
                   child: Text(
-                    answers[3],
+                    answers["d"],
                   ),
                 ),
               ]),
-                if (answered ) ElevatedButton(
+              if (answered)
+                ElevatedButton(
                   onPressed: () {
                     setState(() {
                       setNextQuestion();
@@ -173,62 +191,80 @@ class QuizzGameState extends GameState<QuizzGame> {
     );
   }
 
-
-  void onButtonPushed(int button) {
+  void onButtonPushed(String button) {
     answered = true;
-    if (button == getValidAnswerButton()){
+    if (button == rightAnswer) {
       nbCorrect++;
     }
   }
 
-  int getValidAnswerButton(){
+  int getValidAnswerButton() {
     return 1;
   }
 
-  void setNextQuestion(){
-
-    if (currentIndex == questions.length){
-      currentIndex++;
-      print(questions.length);
-      print(questions[0]);
-      var question = questions[0];
-      print(question);
+  void setNextQuestion() {
+    if (currentIndex < questions.length) {
+      var question = questions[currentIndex];
       questionText = question["question"];
       answers = question["options"];
       rightAnswer = question["answer"];
+      currentIndex++;
+      setState(() {});
+    } else {
+      send(new QuizzEndRequest(nbCorrect));
+      onEnd();
     }
-
   }
 
-
-  Color getButtonColor(int button) {
-      return Colors.blue;
+  Color getButtonColor(String button) {
+    if (answered) {
+      if (button == rightAnswer) {
+        return Colors.green;
+      } else {
+        return Colors.red;
+      }
+    }
+    return Colors.blue;
   }
 
-  onSoloLoose() {
-  
-    this.stop();
-    winner = "IA";
-    goToWaitMenu(false, "stop");
+  onEnd() {
+    if (GameManager.instance!.gameMode == GameMode.Solo) {
+      onSoloWin();
+    } else {
+      if (GameManager.instance!.wifiP2PInfo!.isGroupOwner == true) {
+        if (otherHasFinished) {
+          if (nbCorrect > otherNbCorrect) {
+            onWin();
+          } else if (nbCorrect < otherNbCorrect) {
+            onLoose();
+          } else {
+            onTie();
+          }
+        }
+      }
+    }
   }
 
   onSoloWin() {
-
     winner = GameManager.instance!.getMyID();
     this.stop();
-    goToWaitMenu(true,"stop");
+    goToWaitMenu(true, "you guessed " + nbCorrect.toString() + " questions ! ");
   }
 
   onWin() {
-    
+    winner = GameManager.instance!.getMyID();
     this.stop();
     dispatchOnEnd(false);
-    send(new WinRequest(true));
+  }
+
+  onTie() {
+    this.stop();
+    dispatchOnEnd(false);
   }
 
   onLoose() {
+    winner = GameManager.instance!.getMyID();
     this.stop();
     dispatchOnEnd(true);
-    send(new WinRequest(false));
   }
 }

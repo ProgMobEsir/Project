@@ -4,6 +4,7 @@ import 'package:wifi_direct_json/GameEngine/colliders/RectCollider.dart';
 import 'package:wifi_direct_json/Games/DragGame/Player.dart';
 import 'package:wifi_direct_json/Games/DragGame/food.dart';
 import 'package:wifi_direct_json/Games/DragGame/guest.dart';
+import 'package:wifi_direct_json/Games/DragGame/mapBorder.dart';
 import 'package:wifi_direct_json/Utils/GameMods.dart';
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
@@ -53,7 +54,7 @@ class DragGameState extends GameState<DragGame> {
       if (posReq.type == "food") {
         Food f = new Food(posReq.x, posReq.y);
         foods.add(f);
-        engine.addGameObject(f);
+        engine!.addGameObject(f);
       }
     }
     if (request.type == "win") {
@@ -68,59 +69,51 @@ class DragGameState extends GameState<DragGame> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragUpdate: (DragUpdateDetails details) {
-        var x = details.globalPosition.dx.toInt();
-        var y = details.globalPosition.dy.toInt();
-        setState(() {});
-        update();
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.amber,
-            //add a button to the home page :
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  this.stop();
-                  NavigationService.instance.navigateToReplacement("GAMES");
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.amber,
+          //add a button to the home page :
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                this.stop();
+                NavigationService.instance.navigateToReplacement("GAMES");
+              },
+            ),
+          ],
+          title: const Text('Drag Game'),
+        ),
+        body: Stack(
+          children: [
+            engine!.getWidget(),
+            Align(
+              alignment: const Alignment(0, 0.8),
+              child: Joystick(
+                mode: JoystickMode.all,
+                listener: (details) {
+                  setState(() {
+                    joyX = details.x;
+                    joyY = details.y;
+                  });
                 },
               ),
-            ],
-            title: const Text('Drag Game'),
-          ),
-          body: Stack(
-            children: [
-              engine.getWidget(),
-              Align(
-                alignment: const Alignment(0, 0.8),
-                child: Joystick(
-                  mode: JoystickMode.all,
-                  listener: (details) {
-                    setState(() {
-                      joyX = details.x;
-                      joyY = details.y;
-                    });
-                  },
+            ),
+            Align(
+              alignment: AlignmentDirectional.topCenter,
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  "Your Food :  " + player.foodEaten.toString(),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      backgroundColor: Colors.amber),
                 ),
               ),
-              Align(
-                alignment: AlignmentDirectional.topCenter,
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    "Your Food :  " + player.foodEaten.toString(),
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        backgroundColor: Colors.amber),
-                  ),
-                ),
-              ),
-            ],
-          )),
-    );
+            ),
+          ],
+        ));
   }
 
   sendPosition(int dx, int dy) {
@@ -134,8 +127,20 @@ class DragGameState extends GameState<DragGame> {
   List<Food> foods = [];
 
   initGame() {
-    engine.addGameObject(player);
-    engine.addGameObject(guest);
+    MapBorder bordern = new MapBorder(
+        -mapSize[0] / 2.0, -mapSize[1] / 2.0, mapSize[0].toDouble(), 10.0);
+    MapBorder borderw = new MapBorder(
+        -mapSize[0] / 2.0, -mapSize[1] / 2.0, 10.0, mapSize[1].toDouble());
+    MapBorder borders = new MapBorder(
+        mapSize[0] / 2.0, mapSize[1] / 2.0, -mapSize[0].toDouble(), 10.0);
+    MapBorder borderse = new MapBorder(
+        mapSize[0] / 2.0, mapSize[1] / 2.0, 10.0, -mapSize[1].toDouble());
+    engine!.addGameObject(bordern);
+    engine!.addGameObject(borderw);
+    engine!.addGameObject(borders);
+    engine!.addGameObject(borderse);
+    engine!.addGameObject(player);
+    engine!.addGameObject(guest);
   }
 
   void boundPlayer() {
@@ -173,6 +178,7 @@ class DragGameState extends GameState<DragGame> {
   @override
   update() {
     super.update();
+    boundPlayer();
 
     if (GameManager.instance!.gameMode == GameMode.Solo) {
       guest.transform.position +=
@@ -189,7 +195,7 @@ class DragGameState extends GameState<DragGame> {
       var y = Random().nextInt(mapSize[1]) - mapSize[1] / 2;
       var food = new Food(x.toDouble(), y.toDouble());
       foods.add(food);
-      engine.addGameObject(food);
+      engine!.addGameObject(food);
       send(new InstanciationRequest(x.toDouble(), y.toDouble(), "food"));
     }
 
@@ -200,9 +206,8 @@ class DragGameState extends GameState<DragGame> {
     for (var food in foods) {
       if (player.collider
           .isCollidingRectCollider(food.collider as RectCollider)) {
-        print("food eaten");
         player.foodEaten += 1;
-        
+
         food.destroy();
         toRemove.add(food);
         AudioManager.getInstance().playEffect("powerup.mp3");
@@ -210,7 +215,6 @@ class DragGameState extends GameState<DragGame> {
 
       if (guest.collider
           .isCollidingRectCollider(food.collider as RectCollider)) {
-        print("food eaten");
         guest.foodEaten += 1;
         food.destroy();
         toRemove.add(food);

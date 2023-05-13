@@ -34,7 +34,6 @@ class _WaitingForPlayerMenuState extends State<WaitingForPlayerMenu>
                 setState(() {});
 
                 GameManager.instance!.manageScores();
-                
               },
               child: const Text('ReloadPlayerList'),
             ),
@@ -42,6 +41,7 @@ class _WaitingForPlayerMenuState extends State<WaitingForPlayerMenu>
               onPressed: () {
                 NavigationService.instance.navigateToReplacement('GAMES');
                 GameManager.instance!.manageScores();
+                GameManager.instance!.sendPlayers();
               },
               child: const Text('Start'),
             ),

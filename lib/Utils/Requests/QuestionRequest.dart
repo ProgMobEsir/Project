@@ -3,12 +3,16 @@ import 'dart:convert';
 import 'JsonRequest.dart';
 
 class QuestionRequest extends JsonRequest {
-  var questions = {};
+  List<dynamic> questions = [];
 
-  QuestionRequest(this.questions) : super('{"questions":"$questions"}', "questions", "");
+  QuestionRequest(this.questions) : super("{}", "questions", "") {
+    this.body = '{"questions":${JsonEncoder().convert(questions)}}';
+  }
 
   QuestionRequest.FromString(String s) : super.FromString(s) {
     var jsonDecoded = JsonDecoder().convert(body);
-    questions = jsonDecoded['questions'];
+    List<dynamic> q = jsonDecoded['questions'];
+    print(q);
+    questions = q;
   }
 }

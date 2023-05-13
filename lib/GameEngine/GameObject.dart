@@ -1,5 +1,6 @@
 import 'package:wifi_direct_json/GameEngine/colliders/RectCollider.dart';
 import 'package:wifi_direct_json/GameEngine/transform.dart';
+import 'Engine.dart';
 import 'Vector2D.dart';
 import 'colliders/collider.dart';
 import 'shapes/Renderer.dart';
@@ -7,6 +8,11 @@ import 'package:wifi_direct_json/GameEngine/shapes/Rectangle.dart';
 
 class GameObject {
   bool destroy_ = false;
+  GameEngine? engine ;
+
+  void setEngine(GameEngine engine){
+    this.engine = engine;
+  }
 
   Transform transform =
       new Transform(new Vector2D(0, 0), new Vector2D(1, 1), 0);

@@ -6,9 +6,13 @@ import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/QuestionRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/ScoreRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/SequenceRequest.dart';
+import 'package:wifi_direct_json/Utils/Requests/ShootRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/WinRequest.dart';
 
 import 'InstanciationRequest.dart';
+import 'LifeRequest.dart';
+import 'PlayersRequest.dart';
+import 'QuizzEndRequest.dart';
 
 class JsonRequest {
   //the vars
@@ -72,5 +76,21 @@ class JsonRequest {
 
   QuestionRequest getQuestionRequest() {
     return new QuestionRequest.FromString(getRequest());
+  }
+
+  QuizzEndRequest getQuizzEndRequest() {
+    return new QuizzEndRequest.FromString(getRequest());
+  }
+
+  PlayerRequest getPlayerRequest() {
+    return new PlayerRequest.FromString(getRequest());
+  }
+
+  ShootRequest getShootRequest() {
+    return new ShootRequest.FromString(getRequest());
+  }
+
+  LifeRequest getLifeRequest() {
+    return new LifeRequest.FromString(getRequest());
   }
 }

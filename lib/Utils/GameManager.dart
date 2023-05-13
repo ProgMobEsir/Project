@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 import 'package:wifi_direct_json/Utils/Requests/JsonRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/NewPeerNameRequest.dart';
+import 'package:wifi_direct_json/Utils/Requests/PlayersRequest.dart';
 import '../navigation/NavigationService.dart';
 import '/Utils/Reciever.dart';
 import '/Utils/GameMods.dart';
@@ -15,7 +14,7 @@ class GameManager {
   List<String> players = [];
 
   GameMode gameMode = GameMode.Solo;
-  var scores = {};
+  Map<dynamic, dynamic> scores = {};
 
   List<DiscoveredPeers> peers = [];
 
@@ -74,26 +73,40 @@ class GameManager {
       print("new player connected ! " + newPeerNameRequest.name);
     }
 
-    if (jsonReq.type == "MENU") {
+    else if (jsonReq.type == "MENU") {
       if (jsonReq.metadata == "NAMING") {
         NavigationService.instance.navigateToReplacement("NAMING");
       }
     }
 
-    if (jsonReq.type == "GAME") {
+    else if (jsonReq.type == "GAME") {
       if (jsonReq.metadata == "SIMON") {
-        print("starting simon");
         NavigationService.instance.navigateToReplacement("GAME_SIMON");
       } else if (jsonReq.metadata == "DRAG") {
-        print("starting agar");
         NavigationService.instance.navigateToReplacement("GAME_DRAG");
       } else if (jsonReq.metadata == "ACCEL") {
-        print("starting agar");
         NavigationService.instance.navigateToReplacement("GAME_ACCEL");
+      } else if (jsonReq.metadata == "SHOOTER") {
+        NavigationService.instance.navigateToReplacement("GAME_SHOOTER");
+      } else if (jsonReq.metadata == "QUIZZ") {
+        NavigationService.instance.navigateToReplacement("GAME_QUIZZ");
       }
     }
-    if (jsonReq.type == "scores") {
+
+    else if (jsonReq.type == "scores") {
       scores = jsonReq.getScoreRequest().scores;
+    }
+
+    else if (jsonReq.type == "players") {
+      print("recieving players");
+      players = jsonReq.getPlayerRequest().players.split(",");
+    }
+  }
+
+  void sendPlayers() {
+    if (wifiP2PInfo!.isGroupOwner) {
+      String tmp = players.join(",");
+      sendJsonRequest(PlayerRequest(tmp));
     }
   }
 
@@ -114,6 +127,7 @@ class GameManager {
 
   void resetPlayers() {
     players = [];
+    scores = {};
   }
 
   void init() async {
@@ -185,6 +199,7 @@ class GameManager {
   }
 
   Future closeSocketConnection() async {
+    resetPlayers();
     bool closed = _flutterP2pConnectionPlugin.closeSocket();
   }
 

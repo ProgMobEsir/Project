@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
+
 class Vector2D {
   double x;
   double y;
@@ -32,6 +34,9 @@ class Vector2D {
 
   Vector2D get normalized {
     double len = length;
+    if (len == 0.0) {
+      return Vector2D(0.0, 0.0);
+    }
     return Vector2D(x / len, y / len);
   }
 
@@ -60,5 +65,9 @@ class Vector2D {
   @override
   String toString() {
     return 'Vector2D{x: $x, y: $y}';
+  }
+
+  Offset toOffset() {
+    return Offset(x, y);
   }
 }

@@ -9,7 +9,6 @@ class Circle extends Renderer {
 
   Circle.withColor(parent, this.radius, Color color) : super(parent, color) {}
 
-
   bool draw(Canvas canvas, Paint paint) {
     paint.color = this.color;
     canvas.drawCircle(

@@ -1,10 +1,9 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
 
 import '../Utils/AudioManager.dart';
+import '../Utils/GameManager.dart';
 
 class SettingsMenu extends StatefulWidget {
   const SettingsMenu({super.key});
@@ -14,16 +13,16 @@ class SettingsMenu extends StatefulWidget {
 }
 
 class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
-
   double effectSliderValue = 0.0;
   double musicSliderValue = 0.0;
-
+  final myController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    AudioManager().getMusicVolume().then((value) => {
-      musicSliderValue = value});
-    AudioManager().getEffectVolume().then((value) => {print(effectSliderValue)});
+    AudioManager().getMusicVolume().then((value) => {musicSliderValue = value});
+    AudioManager()
+        .getEffectVolume()
+        .then((value) => {print(effectSliderValue)});
     AudioManager.getInstance().playMusic("intro.mp3");
   }
 
@@ -31,7 +30,6 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    AudioManager.getInstance().dispose();
   }
 
   @override
@@ -50,7 +48,6 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
         ],
         title: const Text('Settings Menu'),
       ),
-
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -91,6 +88,21 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
                 });
               },
             ),
+            const Text(
+              'Enter your name ',
+              //generate a line to add padding to the text
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            TextField(
+              controller: myController,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  GameManager.instance!.playerName = myController.text;
+                },
+                child: Text('setName')),
           ],
         ),
       ),

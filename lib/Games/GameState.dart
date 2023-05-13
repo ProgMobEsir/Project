@@ -12,7 +12,7 @@ import '/Utils/GameManager.dart';
 
 class GameState<T extends StatefulWidget> extends State<T>
     with WidgetsBindingObserver, Reciever {
-  GameEngine engine = GameEngine();
+  GameEngine? engine;
 
   String winner = "";
   bool wined = false;
@@ -23,11 +23,12 @@ class GameState<T extends StatefulWidget> extends State<T>
     run = false;
     GameManager.instance!.unsubscribe(this);
     timer.cancel();
-    this.engine.stop();
+    this.engine!.stop();
   }
 
   @override
   void initState() {
+    engine = GameEngine(this);
     super.initState();
     timer = Timer.periodic(Duration(milliseconds: 10), (timer) {
       if (run) Mupdate();
@@ -94,7 +95,8 @@ class GameState<T extends StatefulWidget> extends State<T>
           if (GameManager.instance!.players[i] !=
               GameManager.instance!.getMyID()) {
             GameManager.instance!.scores[GameManager.instance!.players[i]] += 1;
-            GameManager.instance!.setLastWinner(GameManager.instance!.players[i]);
+            GameManager.instance!
+                .setLastWinner(GameManager.instance!.players[i]);
           }
         }
       } else {

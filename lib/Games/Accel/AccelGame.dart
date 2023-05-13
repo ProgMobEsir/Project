@@ -138,7 +138,7 @@ class AccelGameState extends GameState<AccelGame> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    engine.getWidget(),
+                    engine!.getWidget(),
                   ]),
                 ],
               ),
@@ -155,8 +155,8 @@ class AccelGameState extends GameState<AccelGame> {
       Random().nextInt(200).toDouble(), Random().nextInt(200).toDouble(), 30);
 
   initGame() {
-    engine.addGameObject(cible);
-    engine.addGameObject(bubble);
+    engine!.addGameObject(cible);
+    engine!.addGameObject(bubble);
 
     cible.renderer.color = Colors.red;
 

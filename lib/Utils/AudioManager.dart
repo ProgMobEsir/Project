@@ -26,8 +26,12 @@ class AudioManager {
   }
 
   Future<void> playMusic(String s) async {
-    await MusicChannel.setAsset('assets/sounds/' + s)
-        .then((value) => MusicChannel.play());
+    try {
+      await MusicChannel.setAsset('assets/sounds/' + s)
+          .then((value) => MusicChannel.play());
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> setMusicVolume(double v) async {
@@ -50,5 +54,4 @@ class AudioManager {
     EffectChannel.stop();
     MusicChannel.stop();
   }
-
 }

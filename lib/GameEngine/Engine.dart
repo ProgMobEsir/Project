@@ -1,13 +1,22 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/GameEngine/GameObject.dart';
-import '/GameEngine/shapes/Circle.dart';
-import 'shapes/Renderer.dart';
+import 'package:wifi_direct_json/Games/GameState.dart';
 
 class GameEngine {
   bool run = true;
   List<GameObject> list = [];
+  GameState? game;
+  static GameEngine instance = GameEngine(null);
+  Canvas canva = new Canvas(PictureRecorder());
+
+  GameEngine(this.game) {
+    instance = this;
+  }
 
   void addGameObject(GameObject s) {
+    s.setEngine(this);
     list.add(s);
   }
 
@@ -31,18 +40,18 @@ class MyPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    gameEngine.canva = canvas;
     if (!gameEngine.run) return;
     Paint paint = Paint()
       ..color = Colors.red
       ..strokeWidth = 5;
-
     List<GameObject> tmp = [];
     gameEngine.list.forEach((element) {
       if (element.destroy_) {
         tmp.add(element);
       }
-      element.getRenderer().draw(canvas, paint);
       element.update();
+      element.getRenderer().draw(canvas, paint);
     });
 
     tmp.forEach((element) {

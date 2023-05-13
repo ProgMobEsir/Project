@@ -54,7 +54,7 @@ class DragGameState extends GameState<DragGame> {
           ],
           title: const Text('Game Template'),
         ),
-        body: engine.getWidget(),
+        body: engine!.getWidget(),
       ),
     );
   }
