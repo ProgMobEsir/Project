@@ -33,6 +33,6 @@ class Bullet extends GameObject {
 
   bool isCollidingPlayer(ISoldier s) {
     return (s.collider.isCollidingRectCollider(this.collider as RectCollider) &&
-        s.name != this.owner);
+        s.name != this.owner && !this.destroy_);
   }
 }

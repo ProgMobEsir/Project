@@ -80,12 +80,7 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(padding: const EdgeInsets.only(top: 20)),
-                  Text(
-                      "IP: ${GameManager.instance!.wifiP2PInfo == null ? "null" : GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}"),
-                  GameManager.instance!.wifiP2PInfo != null
-                      ? Text(
-                          "connected: ${GameManager.instance!.wifiP2PInfo?.isConnected}, isGroupOwner: ${GameManager.instance!.wifiP2PInfo?.isGroupOwner}, groupFormed: ${GameManager.instance!.wifiP2PInfo?.groupFormed}, groupOwnerAddress: ${GameManager.instance!.wifiP2PInfo?.groupOwnerAddress}, clients: ${GameManager.instance!.wifiP2PInfo?.clients}")
-                      : const SizedBox.shrink(),
+
                   const SizedBox(height: 10),
                   Padding(padding: const EdgeInsets.only(top: 20)),
                   ElevatedButton(

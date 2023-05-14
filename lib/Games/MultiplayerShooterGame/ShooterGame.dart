@@ -77,8 +77,8 @@ class ShooterGameState extends GameState<ShooterGame> {
         }
       });
     } else if (request.type == "life") {
-      print("life");
       LifeRequest lifeReq = request.getLifeRequest();
+      print("life" + lifeReq.life.toString());
       guests.forEach((guest) {
         if (guest.name == request.peer) {
           guest.life = lifeReq.life;
@@ -237,6 +237,7 @@ class ShooterGameState extends GameState<ShooterGame> {
         if (player.life <= 0) {
           player.life = 10;
           send(new DeafRequest());
+          onLoose();
         }
       }
     });

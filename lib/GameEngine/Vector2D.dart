@@ -6,7 +6,33 @@ class Vector2D {
   double x;
   double y;
 
+
   Vector2D(this.x, this.y);
+
+
+  Vector2D.zero() : this(0.0, 0.0);
+
+  Vector2D.fromVector2D(Vector2D other) : this(other.x, other.y);
+
+  Vector2D.fromOffset(Offset offset) : this(offset.dx, offset.dy);
+
+  Vector2D.fromSize(Size size) : this(size.width, size.height);
+
+  Vector2D.fromDirection(double direction, double length) : this(math.cos(direction) * length, math.sin(direction) * length);
+
+  Vector2D.fromPolar(double radians, double length) : this(math.cos(radians) * length, math.sin(radians) * length);
+
+  Vector2D.fromAngle(double angle) : this(math.cos(angle), math.sin(angle));
+
+  Vector2D.fromAngleDegrees(double angle) : this.fromAngle(angle * math.pi / 180.0);
+
+  Vector2D.down() : this(0.0, 1.0);
+
+  Vector2D.right() : this(1.0, 0.0);
+
+  Vector2D.up() : this(0.0, -1.0);
+
+  Vector2D.left() : this(-1.0, 0.0);
 
   Vector2D operator +(Vector2D other) {
     return Vector2D(x + other.x, y + other.y);
