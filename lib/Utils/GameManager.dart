@@ -1,15 +1,30 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 import 'package:wifi_direct_json/Utils/Requests/JsonRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/NewPeerNameRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/PlayersRequest.dart';
+import 'package:wifi_direct_json/Utils/TournamentManager.dart';
 import '../navigation/NavigationService.dart';
 import '/Utils/Reciever.dart';
 import '/Utils/GameMods.dart';
 
 class GameManager {
+
+  List<String> gameList = [
+    "GAME_SIMON",
+    "GAME_DRAG",
+    "GAME_ACCEL",
+    "GAME_SHOOTER",
+    "GAME_QUIZZ",
+  ];
+
+  TournamentManager tournamentManager = TournamentManager();
+
   var lastWinner = "";
   var playerName = "You";
+
+  Color playerColor = Colors.blue;
 
   List<String> players = [];
 
@@ -37,6 +52,18 @@ class GameManager {
       _instance!.init();
     }
     return _instance;
+  }
+
+  Color getPlayerColor(){
+    return playerColor;
+  }
+
+  void setPlayerColor(Color color){
+    playerColor = color;
+  }
+
+  TournamentManager getTournamentManager(){
+    return tournamentManager;
   }
 
   void subscribe(game) {
@@ -80,17 +107,14 @@ class GameManager {
     }
 
     else if (jsonReq.type == "GAME") {
-      if (jsonReq.metadata == "SIMON") {
-        NavigationService.instance.navigateToReplacement("GAME_SIMON");
-      } else if (jsonReq.metadata == "DRAG") {
-        NavigationService.instance.navigateToReplacement("GAME_DRAG");
-      } else if (jsonReq.metadata == "ACCEL") {
-        NavigationService.instance.navigateToReplacement("GAME_ACCEL");
-      } else if (jsonReq.metadata == "SHOOTER") {
-        NavigationService.instance.navigateToReplacement("GAME_SHOOTER");
-      } else if (jsonReq.metadata == "QUIZZ") {
-        NavigationService.instance.navigateToReplacement("GAME_QUIZZ");
+      for (String game in gameList) {
+        if(game.contains(jsonReq.metadata)){
+          NavigationService.instance.navigateToReplacement(game);
+        }
       }
+    }
+    else if (jsonReq.type == "SCREEN"){
+      NavigationService.instance.navigateToReplacement("TOURNAMENT_END");
     }
 
     else if (jsonReq.type == "scores") {

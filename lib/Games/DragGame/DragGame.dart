@@ -25,9 +25,7 @@ class DragGame extends StatefulWidget {
 class DragGameState extends GameState<DragGame> {
   var sequence = [];
   String data = "";
-
   var spawnRate = 100;
-
   var mapSize = [1000, 1000];
 
   var joyX = 0.0;

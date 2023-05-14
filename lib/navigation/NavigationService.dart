@@ -5,6 +5,8 @@ class NavigationService {
 
   static NavigationService instance = NavigationService();
 
+
+
   Future<dynamic> navigateToReplacement(String _rn) {
     return navigationKey.currentState!.pushReplacementNamed(_rn);
   }

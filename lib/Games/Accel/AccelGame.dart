@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wifi_direct_json/GameEngine/Camera.dart';
 import '../../Utils/GameManager.dart';
 import '../../Utils/GameMods.dart';
 import '../../Utils/Requests/JsonRequest.dart';
@@ -16,7 +17,6 @@ enum Mode { write, guess, wait }
 
 class AccelGame extends StatefulWidget {
   const AccelGame({super.key});
-
   @override
   State<AccelGame> createState() => AccelGameState();
 }
@@ -28,7 +28,7 @@ class AccelGameState extends GameState<AccelGame> {
   List<double>? _magnetometerValues = [0.0, 0.0, 0.0];
   final _streamSubscriptions = <StreamSubscription<dynamic>>[];
 
-  void initSensors() {
+  initSensors(){
     _streamSubscriptions.add(
       userAccelerometerEvents.listen(
         (UserAccelerometerEvent event) {
@@ -68,24 +68,14 @@ class AccelGameState extends GameState<AccelGame> {
   }
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-
     initGame();
     initSensors();
-    var userAccelerometer = _userAccelerometerValues
-        ?.map((double v) => v.toStringAsFixed(1))
-        .toList();
-    var accelerometer =
-        _accelerometerValues?.map((double v) => v.toStringAsFixed(1)).toList();
-    var gyroscope =
-        _gyroscopeValues?.map((double v) => v.toStringAsFixed(1)).toList();
-    var magnetometer =
-        _magnetometerValues?.map((double v) => v.toStringAsFixed(1)).toList();
   }
 
   @override
@@ -131,19 +121,11 @@ class AccelGameState extends GameState<AccelGame> {
               ],
               title: const Text('AccelGame'),
             ),
-            body:
-                //add four buttons numbered 1 to 4 :
-                Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    engine!.getWidget(),
-                  ]),
-                ],
-              ),
-            ),
-          ),
+            body: Stack(
+              children: [
+                engine!.getWidget()
+              ],
+            )),
         ],
       ),
     );
@@ -155,12 +137,12 @@ class AccelGameState extends GameState<AccelGame> {
       Random().nextInt(200).toDouble(), Random().nextInt(200).toDouble(), 30);
 
   initGame() {
+    Camera.dx = 0;
+    Camera.dy = 0;
+    print(cible.transform.position.x);
     engine!.addGameObject(cible);
     engine!.addGameObject(bubble);
-
     cible.renderer.color = Colors.red;
-
-    print("init");
   }
 
   var nb = 0;
@@ -188,7 +170,6 @@ class AccelGameState extends GameState<AccelGame> {
 
     if (dist.length < 40) {
       cible.transform.position.x = Random().nextInt(200).toDouble();
-
       cible.transform.position.y = Random().nextInt(200).toDouble();
       nb += 1;
     }

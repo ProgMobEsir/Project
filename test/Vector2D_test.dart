@@ -14,7 +14,6 @@ void main() {
   test('not getting the right values for simple instantiation', () {
     final v = Vector2D(100, 100);
 
-
     expect(v.toString(), Vector2D(100, 100).toString());
   });
   test('not the right value when multiplied by scalar', () {

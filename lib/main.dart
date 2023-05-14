@@ -5,6 +5,7 @@ import 'package:wifi_direct_json/Games/DragGame/DragGame.dart';
 import 'package:wifi_direct_json/Games/MultiplayerShooterGame/ShooterGame.dart';
 import 'package:wifi_direct_json/Games/Quizz/QuizzGame.dart';
 import 'package:wifi_direct_json/Games/SimonGame/SuperSimon.dart';
+import 'package:wifi_direct_json/Menus/GameTourMenu.dart';
 import 'package:wifi_direct_json/Menus/SettingsMenu.dart';
 import 'package:wifi_direct_json/Menus/WaitsMenus/GuestWaitMenu.dart';
 import 'package:wifi_direct_json/Menus/WaitsMenus/HostWaitMenu.dart'
@@ -13,6 +14,7 @@ import '/Menus/HomePage.dart';
 import 'Menus/ClientMenu.dart';
 import 'Menus/GameMenu.dart';
 import 'Menus/NamingMenu.dart';
+import 'Menus/TournamentEndMenu.dart';
 import 'Menus/WaitsMenus/WaitingForPlayerMenu.dart';
 import 'navigation/NavigationService.dart';
 
@@ -50,6 +52,8 @@ class MyApp extends StatelessWidget {
         "WAIT_PLAYERS": (BuildContext context) => WaitingForPlayerMenu(),
         "GAME_QUIZZ": (BuildContext context) => QuizzGame(),
         "GAME_SHOOTER": (BuildContext context) => ShooterGame(),
+        "GAME_TOURNAMENT":(BuildContext context) => GameTourMenu(),
+        "TOURNAMENT_END":(BuildContext context) => TournamentEndMenu(),
       },
     );
   }

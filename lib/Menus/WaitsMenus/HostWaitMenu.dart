@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
+import '../../Utils/GameMods.dart';
 import '/Utils/GameManager.dart';
 
 class HostWaitMenu extends StatefulWidget {
@@ -12,6 +13,8 @@ class HostWaitMenu extends StatefulWidget {
 
 class _HostWaitMenuState extends State<HostWaitMenu>
     with WidgetsBindingObserver {
+
+  var btState = "t'as pas appuié";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +23,7 @@ class _HostWaitMenuState extends State<HostWaitMenu>
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'And the winner is..',
+              "And the winner is "+ GameManager.instance!.getLastWinner().toString() + " !",
               //generate a line to add padding to the text
               style: TextStyle(
                 fontSize: 20,
@@ -35,11 +38,12 @@ class _HostWaitMenuState extends State<HostWaitMenu>
             ),
             Text(widget.message),
             Text(
-              'click next to choose the next game !',
-              //generate a line to add padding to the text
+              GameManager.instance!.tournamentManager.running ? 'click next to go the next game in tournament!' : 'click next to choose the next game !'  ,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
               ),
+
             ),
             Text(
               "Scores " + GameManager.instance!.scores.toString(),
@@ -47,11 +51,37 @@ class _HostWaitMenuState extends State<HostWaitMenu>
             ),
             ElevatedButton(
               onPressed: () {
-                GameManager.instance!.sendPlayers();
-                NavigationService.instance.navigateToReplacement('GAMES');
+
+                if(GameManager.instance!.gameMode == GameMode.Multi && GameManager.instance!.wifiP2PInfo!.isGroupOwner){
+
+                  GameManager.instance!.manageScores();
+                  GameManager.instance!.sendPlayers();
+                }
+                if (GameManager.instance!.tournamentManager.running)
+                {
+
+                  GameManager.instance!.tournamentManager.NextGame();
+                }else{
+
+                  NavigationService.instance.navigateToReplacement('GAMES');
+                }
+
               },
               child: const Text('Next'),
             ),
+            Text(
+              ""
+            ),
+            if (GameManager.instance!.tournamentManager.running)
+              ElevatedButton(
+                onPressed: () {
+                  GameManager.instance!.tournamentManager.stopTournament();
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.purple),
+                ),
+                child: const Text('Exit Tournament'),
+              ),
           ],
         ),
       ),

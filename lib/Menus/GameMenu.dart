@@ -24,6 +24,7 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     
   }
 
@@ -82,6 +83,17 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
                     .navigateToReplacement("GAME_" + randomGameName);
               },
               child: const Text("Ramdom Game"), //automatic in games
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.purple),
+              ),
+              onPressed: () async {
+
+                NavigationService.instance
+                    .navigateToReplacement("GAME_TOURNAMENT");
+              },
+              child: const Text("Game Tournament "), //automatic in games
             ),
             ElevatedButton(
               onPressed: () {
@@ -150,6 +162,19 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
               },
               child: const Text("Multiplayer Shooter"),
             ),
+            if (GameManager.instance!.tournamentManager.running)
+              ElevatedButton(
+                onPressed: () {
+                  GameManager.instance!.tournamentManager.stopTournament();
+                  setState(() {
+
+                  });
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.purple),
+                ),
+                child: const Text('Exit Tournament'),
+              ),
           ],
         ),
       ),

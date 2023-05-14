@@ -17,5 +17,8 @@ class PlayerTag extends GameObject {
     super.update();
     transform.position.x = p!.transform.position.x;
     transform.position.y = p!.transform.position.y;
+    if (p!.life <= 0) {
+      destroy();
+    }
   }
 }

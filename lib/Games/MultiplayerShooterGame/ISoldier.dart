@@ -28,6 +28,7 @@ class ISoldier extends GameObject {
           this.aimy,
         ),
         this.name);
+    bullet.renderer.color = this.renderer.color;
     engine!.addGameObject(bullet);
   }
 }

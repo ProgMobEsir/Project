@@ -3,13 +3,16 @@ import 'package:wifi_direct_json/GameEngine/shapes/LineRenderer.dart';
 
 import '../../GameEngine/Camera.dart';
 import '../../GameEngine/Vector2D.dart';
+import '../../Utils/GameManager.dart';
 import 'ISoldier.dart';
 
 class Soldier extends ISoldier {
   LineRenderer? lr;
   double radius = 50;
   Soldier(x, y, name) : super(x, y, name) {
+    renderer.color = GameManager.instance!.playerColor;
     lr = new LineRenderer(this, new Vector2D(0, 0), new Vector2D(50, 50));
+    lr!.color = renderer.color;
   }
 
   @override

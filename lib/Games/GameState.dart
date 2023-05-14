@@ -75,12 +75,13 @@ class GameState<T extends StatefulWidget> extends State<T>
   void update() {}
 
   void goToWaitMenu(bool win, String message) {
+    GameManager.instance!.lastWinner = winner;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         // ignore: prefer_const_constructors
         builder: (_) => HostWaitMenu(
-          message: win ? "You win ! " + message : "You loose ! " + message,
+          message: message,
         ),
       ),
     );

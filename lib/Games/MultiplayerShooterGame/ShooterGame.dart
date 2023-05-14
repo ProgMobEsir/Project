@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wifi_direct_json/GameEngine/Vector2D.dart';
+import 'package:wifi_direct_json/Games/MultiplayerShooterGame/LifeBar.dart';
 import 'package:wifi_direct_json/Games/MultiplayerShooterGame/playerTag.dart';
+import 'package:wifi_direct_json/Utils/GameMods.dart';
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
 import '../../Utils/AudioManager.dart';
@@ -163,11 +165,11 @@ class ShooterGameState extends GameState<ShooterGame> {
     send(new PositionRequest(dx.toDouble(), dy.toDouble()));
   }
 
-  Soldier player = new Soldier(100.0, 100.0, GameManager.instance!.getMyID());
+  Soldier player = new Soldier(0.0, 0.0, GameManager.instance!.getMyID());
 
   List<SoldierGuest> guests = [];
   List<PlayerTag> tags = [];
-
+  List<LifeBar> lbars = [];
   shoot() {
     player.shoot();
     send(ShootRequest(player.aimx, player.aimy));
@@ -187,20 +189,43 @@ class ShooterGameState extends GameState<ShooterGame> {
     engine!.addGameObject(borderw);
     engine!.addGameObject(borders);
     engine!.addGameObject(borderse);
-    GameManager.instance!.players.forEach((element) {
-      if (element != GameManager.instance!.getMyID()) {
-        var g = new SoldierGuest(100.0, 250.0, element);
+    if (GameManager.instance!.gameMode == GameMode.Multi) {
+      var i = 0;
+      GameManager.instance!.players.forEach((element) {
+        if (element != GameManager.instance!.getMyID()) {
+          var g = new SoldierGuest(100 + i * 100.0, 100 + i * 100.0, element);
+          var ptag = new PlayerTag(g);
+          var lbar = new LifeBar(g);
+          guests.add(g);
+          tags.add(ptag);
+          lbars.add(lbar);
+          engine!.addGameObject(g);
+          engine!.addGameObject(ptag);
+          engine!.addGameObject(lbar);
+        }
+        i++;
+      });
+    } else {
+      int nbIA = 3;
+
+      for (var i = 0; i < nbIA; i++) {
+        var g = new SoldierGuest(100 + i*100.0, 100+i*100.0, "AI" + i.toString());
         var ptag = new PlayerTag(g);
+        var lbar = new LifeBar(g);
         guests.add(g);
         tags.add(ptag);
         engine!.addGameObject(g);
         engine!.addGameObject(ptag);
+        engine!.addGameObject(lbar);
       }
-    });
+    }
     PlayerTag playerTag = new PlayerTag(player);
+    var lbar = new LifeBar(player);
     tags.add(playerTag);
+    lbars.add(lbar);
     engine!.addGameObject(player);
     engine!.addGameObject(playerTag);
+    engine!.addGameObject(lbar);
   }
 
   void boundPlayer() {
@@ -226,37 +251,84 @@ class ShooterGameState extends GameState<ShooterGame> {
     player.transform.position.x += (velx * player.speed).toInt();
     player.transform.position.y += (vely * player.speed).toInt();
 
-    sendPosition(player.transform.position.x.toInt(),
-        player.transform.position.y.toInt());
-
-    Bullet.list.forEach((bullet) {
-      if (bullet.isCollidingPlayer(player)) {
-        bullet.destroy();
-        player.life -= 1;
-        send(new LifeRequest(player.life));
-        if (player.life <= 0) {
-          player.life = 10;
-          send(new DeafRequest());
-          onLoose();
-        }
-      }
-    });
-    Bullet.list.forEach((bullet) {
+    if (GameManager.instance!.gameMode == GameMode.Solo) {
       guests.forEach((guest) {
-        if (bullet.isCollidingPlayer(guest)) {
+        guest.transform.position.x =0;
+        guest.transform.position.y =0;
+      });
+      Bullet.list.forEach((bullet) {
+        if (bullet.isCollidingPlayer(player)) {
           bullet.destroy();
+          player.life -= 1;
+
+          if (player.life <= 0) {
+            player.life = 10;
+            onLoose();
+          }
         }
       });
-    });
+
+      Bullet.list.forEach((bullet) {
+        SoldierGuest? g;
+        guests.forEach((guest) {
+          if (bullet.isCollidingPlayer(guest)) {
+            bullet.destroy();
+            guest.life -= 1;
+            if (guest.life <= 0) {
+              g = guest;
+            }
+          }
+        });
+        if (g!=null) guests.remove(g);
+
+      });
+      if (guests.length == 0) {
+        onWin();
+      }
+
+    }else{
+      sendPosition(player.transform.position.x.toInt(),
+          player.transform.position.y.toInt());
+      Bullet.list.forEach((bullet) {
+        if (bullet.isCollidingPlayer(player)) {
+          bullet.destroy();
+          player.life -= 1;
+          send(new LifeRequest(player.life));
+          if (player.life <= 0) {
+            player.life = 10;
+            send(new DeafRequest());
+            onLoose();
+          }
+        }
+      });
+      Bullet.list.forEach((bullet) {
+        guests.forEach((guest) {
+          if (bullet.isCollidingPlayer(guest)) {
+            bullet.destroy();
+          }
+        });
+      });
+    }
   }
 
   onLoose() {
+    var msg = "";
+    if (GameManager.instance!.gameMode == GameMode.Solo){
+      winner = "ia";
+      msg = "you loosed, battle is over for you\n" + "winner is " + winner ;
+    }
+    else{
+      winner = "friends";
+      msg =" wait until the end of the battle ! ";
+    }
     this.stop();
-    goToWaitMenu(false, "you loosed");
+    goToWaitMenu(false, msg);
   }
 
   onWin() {
+    winner = GameManager.instance!.getMyID();
     this.stop();
     goToWaitMenu(true, "you won the battle ! ");
   }
+
 }
