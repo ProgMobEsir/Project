@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wifi_direct_json/Games/Accel/AccelGame.dart';
 import 'package:wifi_direct_json/Games/DragGame/DragGame.dart';
+import 'package:wifi_direct_json/Games/FruitSlasher/FruitSlasher.dart';
 import 'package:wifi_direct_json/Games/MultiplayerShooterGame/ShooterGame.dart';
 import 'package:wifi_direct_json/Games/Quizz/QuizzGame.dart';
 import 'package:wifi_direct_json/Games/SimonGame/SuperSimon.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         "WAIT_PLAYERS": (BuildContext context) => WaitingForPlayerMenu(),
         "GAME_QUIZZ": (BuildContext context) => QuizzGame(),
         "GAME_SHOOTER": (BuildContext context) => ShooterGame(),
+        "GAME_FRUIT": (BuildContext context) => FruitSlasherGame(),
         "GAME_TOURNAMENT":(BuildContext context) => GameTourMenu(),
         "TOURNAMENT_END":(BuildContext context) => TournamentEndMenu(),
       },

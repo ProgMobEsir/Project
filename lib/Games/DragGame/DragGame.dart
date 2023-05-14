@@ -194,7 +194,8 @@ class DragGameState extends GameState<DragGame> {
       var food = new Food(x.toDouble(), y.toDouble());
       foods.add(food);
       engine!.addGameObject(food);
-      send(new InstanciationRequest(x.toDouble(), y.toDouble(), "food"));
+      send(new InstanciationRequest(x.toDouble(), y.toDouble(), "food",
+           food.transform.scale.x, food.transform.scale.y,food.renderer.color.toString(),0.0,0.0));
     }
 
     player.transform.position.x += joyX * player.speed;

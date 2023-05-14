@@ -252,10 +252,6 @@ class ShooterGameState extends GameState<ShooterGame> {
     player.transform.position.y += (vely * player.speed).toInt();
 
     if (GameManager.instance!.gameMode == GameMode.Solo) {
-      guests.forEach((guest) {
-        guest.transform.position.x =0;
-        guest.transform.position.y =0;
-      });
       Bullet.list.forEach((bullet) {
         if (bullet.isCollidingPlayer(player)) {
           bullet.destroy();

@@ -34,6 +34,9 @@ class Vector2D {
 
   Vector2D.left() : this(-1.0, 0.0);
 
+
+  Vector2D.random() : this((math.Random().nextDouble()*2) -1, (math.Random().nextDouble()*2) -1);
+
   Vector2D operator +(Vector2D other) {
     return Vector2D(x + other.x, y + other.y);
   }

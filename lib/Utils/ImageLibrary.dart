@@ -18,6 +18,9 @@ var  imagesAssets = {};
 Future<void> loadAsset() async {
   imagesAssets["default"] = await loadImage("assets/images/default.PNG");
   imagesAssets["food"] = await loadImage("assets/images/coin.PNG");
+  imagesAssets["blade"] = await loadImage("assets/images/blade.png");
+  imagesAssets["banane"] = await loadImage("assets/images/banane.png");
+  imagesAssets["bomb"] = await loadImage("assets/images/bomb.png");
 }
 
 ui.Image getAsset(String name){

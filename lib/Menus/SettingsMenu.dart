@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import '../Utils/AudioManager.dart';
 import '../Utils/GameManager.dart';
 
 class SettingsMenu extends StatefulWidget {
   const SettingsMenu({super.key});
-
   @override
   State<SettingsMenu> createState() => SettingMenuState();
 }
@@ -37,6 +36,16 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  Future<void> _requestPermissions() async {
+    final List<Permission> permissions = [
+      Permission.locationWhenInUse,
+      Permission.nearbyWifiDevices,
+      Permission.storage,
+    ];
+    final Map<Permission, PermissionStatus> permissionStatuses = await permissions.request();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +68,15 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Padding(padding: EdgeInsets.all(20)),
+            Text('Permissions'),
+            ElevatedButton(onPressed: (){
+              _requestPermissions();
+            }, child: Text('Request Permissions')),
+            Divider(
+              height: 20,
+              thickness: 2,
+              color: Colors.grey,
+            ),
             Text(
               'Customize you app !',
               //generate a line to add padding to the text

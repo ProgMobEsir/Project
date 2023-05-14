@@ -17,6 +17,7 @@ class GameManager {
     "GAME_ACCEL",
     "GAME_SHOOTER",
     "GAME_QUIZZ",
+    "GAME_FRUIT",
   ];
 
   TournamentManager tournamentManager = TournamentManager();

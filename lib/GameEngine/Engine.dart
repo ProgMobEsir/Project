@@ -10,14 +10,14 @@ class GameEngine {
   GameState? game;
   static GameEngine instance = GameEngine(null);
   Canvas canva = new Canvas(PictureRecorder());
-
+  List<GameObject> toBeAdded = [];
   GameEngine(this.game) {
     instance = this;
   }
 
   void addGameObject(GameObject s) {
     s.setEngine(this);
-    list.add(s);
+    toBeAdded.add(s);
   }
 
   void stop() {
@@ -46,6 +46,8 @@ class MyPainter extends CustomPainter {
       ..color = Colors.red
       ..strokeWidth = 5;
     List<GameObject> tmp = [];
+    gameEngine.list.addAll(gameEngine.toBeAdded);
+    gameEngine.toBeAdded.clear();
     gameEngine.list.forEach((element) {
       if (element.destroy_) {
         tmp.add(element);
@@ -53,6 +55,8 @@ class MyPainter extends CustomPainter {
       element.update();
       element.getRenderer().draw(canvas, paint);
     });
+
+
 
     tmp.forEach((element) {
       gameEngine.list.remove(element);
