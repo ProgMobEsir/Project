@@ -76,6 +76,7 @@ class DragGameState extends GameState<DragGame> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 this.stop();
+                AudioManager.getInstance().stop();
                 NavigationService.instance.navigateToReplacement("GAMES");
               },
             ),
@@ -247,12 +248,14 @@ class DragGameState extends GameState<DragGame> {
         wined = true;
         winner = GameManager.instance!.getMyID();
         onWin();
+        AudioManager.getInstance().playMusic("win.mp3");
       }
     }
   }
 
   onSoloLoose() {
     this.stop();
+    AudioManager.getInstance().playMusic("loose.mp3");
     goToWaitMenu(false, "you ate " + player.foodEaten.toString() + " foods");
   }
 
@@ -260,6 +263,7 @@ class DragGameState extends GameState<DragGame> {
     player.foodEaten = 0;
     guest.foodEaten = 0;
     this.stop();
+    AudioManager.getInstance().playMusic("win.mp3");
     goToWaitMenu(true, "you won in  " + 0.toString() + " seconds");
   }
 }

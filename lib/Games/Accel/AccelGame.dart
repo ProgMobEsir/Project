@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wifi_direct_json/GameEngine/Camera.dart';
+import '../../Utils/AudioManager.dart';
 import '../../Utils/GameManager.dart';
 import '../../Utils/GameMods.dart';
 import '../../Utils/Requests/JsonRequest.dart';
@@ -115,6 +116,7 @@ class AccelGameState extends GameState<AccelGame> {
                 IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
+                    AudioManager.getInstance().stop();
                     NavigationService.instance.navigateToReplacement("GAMES");
                   },
                 ),
@@ -190,6 +192,7 @@ class AccelGameState extends GameState<AccelGame> {
     this.stop();
     dispatchOnEnd(false);
     send(new WinRequest(true));
+    AudioManager.getInstance().playMusic("win.mp3");
   }
 
   onReceiveWin() {
@@ -206,15 +209,18 @@ class AccelGameState extends GameState<AccelGame> {
     this.stop();
     dispatchOnEnd(true);
     send(new WinRequest(false));
+    AudioManager.getInstance().playMusic("loose.mp3");
   }
 
   onSoloLoose() {
     this.stop();
+    AudioManager.getInstance().playMusic("loose.mp3");
     goToWaitMenu(false, "time played " + 0.toString() + " seconds");
   }
 
   onSoloWin() {
     this.stop();
+    AudioManager.getInstance().playMusic("win.mp3");
     goToWaitMenu(true, "you won in " + 0.toString() + " seconds");
   }
 }

@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:flutter/src/widgets/image.dart' as WDImg;
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/Utils/ImageLibrary.dart';
-
 import '../Camera.dart';
 import 'Renderer.dart';
 

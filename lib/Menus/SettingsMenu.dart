@@ -90,9 +90,9 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
             Text('Effects volume'),
             Slider(
               value: effectSliderValue,
-              max: 100,
-              divisions: 5,
-              label: effectSliderValue.round().toString(),
+              max: 1,
+              divisions: 100,
+              label: (effectSliderValue*100).round().toString(),
               onChanged: (double value) {
                 setState(() {
                   effectSliderValue = value;
@@ -103,9 +103,9 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
             Text('Music volume'),
             Slider(
               value: musicSliderValue,
-              max: 100,
-              divisions: 5,
-              label: musicSliderValue.round().toString(),
+              max: 1,
+              divisions: 100,
+              label:( musicSliderValue*100).round().toString(),
               onChanged: (double value) {
                 setState(() {
                   musicSliderValue = value;

@@ -85,6 +85,7 @@ class SuperSimonState extends GameState<SuperSimon> {
             IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
+                AudioManager.getInstance().stop();
                 NavigationService.instance.navigateToReplacement("GAMES");
               },
             ),
@@ -261,6 +262,7 @@ class SuperSimonState extends GameState<SuperSimon> {
     seqTimer.cancel();
     this.stop();
     winner = "IA";
+    AudioManager.getInstance().playMusic("loose.mp3");
     goToWaitMenu(false, "you played " + nbTurns.toString() + " turns");
   }
 
@@ -268,21 +270,27 @@ class SuperSimonState extends GameState<SuperSimon> {
     seqTimer.cancel();
     winner = GameManager.instance!.getMyID();
     this.stop();
+    AudioManager.getInstance().playMusic("win.mp3");
     goToWaitMenu(true, "you played " + nbTurns.toString() + " turns");
   }
 
   onWin() {
     seqTimer.cancel();
     this.stop();
-    dispatchOnEnd(false);
     send(new WinRequest(true));
+    AudioManager.getInstance().playMusic("win.mp3");
+    dispatchOnEnd(false);
+
+
   }
 
   onLoose() {
     winner = "ALL";
     seqTimer.cancel();
     this.stop();
-    dispatchOnEnd(true);
     send(new WinRequest(false));
+    AudioManager.getInstance().playMusic("loose.mp3");
+    dispatchOnEnd(true);
+
   }
 }

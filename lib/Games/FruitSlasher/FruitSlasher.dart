@@ -3,12 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wifi_direct_json/GameEngine/Camera.dart';
-import 'package:wifi_direct_json/GameEngine/Vector2D.dart';
+
 import 'package:wifi_direct_json/Games/FruitSlasher/BladeLife.dart';
 import 'package:wifi_direct_json/Games/FruitSlasher/BladeTag.dart';
 import 'package:wifi_direct_json/Games/FruitSlasher/GuestBlade.dart';
-import 'package:wifi_direct_json/Games/MultiplayerShooterGame/LifeBar.dart';
-import 'package:wifi_direct_json/Games/MultiplayerShooterGame/playerTag.dart';
+
 import 'package:wifi_direct_json/Utils/GameMods.dart';
 import 'package:wifi_direct_json/Utils/Requests/InstanciationRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/PositionRequest.dart';
@@ -18,10 +17,9 @@ import '../../Utils/GameManager.dart';
 import '../../Utils/Requests/DeafRequest.dart';
 import '../../Utils/Requests/JsonRequest.dart';
 import '../../Utils/Requests/LifeRequest.dart';
-import '../../Utils/Requests/ShootRequest.dart';
-import '../DragGame/mapBorder.dart';
+
 import '../GameState.dart';
-import 'package:flutter_joystick/flutter_joystick.dart';
+
 import 'Fruit.dart';
 import 'PlayerBlade.dart';
 
@@ -68,6 +66,7 @@ class FruitSlasherGameState extends GameState<FruitSlasherGame> {
         }
       });
     } else if (request.type == "instanciation") {
+      AudioManager.getInstance().playEffect("throw.wav");
       InstanciationRequest instReq = request.getInstanciationRequest();
       engine!.addGameObject(new Fruit.fromData(instReq.x, instReq.y,instReq.dx, instReq.dy, instReq.type));
     }
@@ -129,6 +128,7 @@ class FruitSlasherGameState extends GameState<FruitSlasherGame> {
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   this.stop();
+                  AudioManager.getInstance().stop();
                   NavigationService.instance.navigateToReplacement("GAMES");
                 },
               ),
@@ -202,6 +202,7 @@ class FruitSlasherGameState extends GameState<FruitSlasherGame> {
       }else{
         frt = new Fruit(Random().nextInt(2)*500.0 , 50.0,"bomb");
       }
+      AudioManager.getInstance().playEffect("throw.wav");
       send(new InstanciationRequest(frt.transform.position.x,frt.transform.position.y, frt.type, frt.transform.scale.x, frt.transform.scale.y, frt.renderer.color.toString(), frt.velocity.x, frt.velocity.y));
       engine!.addGameObject(frt);
     }
@@ -212,10 +213,16 @@ class FruitSlasherGameState extends GameState<FruitSlasherGame> {
         if (frt.isCollidingBlade(player)) {
 
           frt.destroy();
-          if (frt.type == "bomb")
+          if (frt.type == "bomb"){
+            AudioManager.getInstance().playEffect("beep1.mp3");
             player.life -= 1;
-          if (frt.type == "banana")
+          }
+
+          if (frt.type == "banana"){
+            AudioManager.getInstance().playEffect("hit.wav");
             player.score += 1;
+          }
+
 
           if (player.life <= 0) {
             player.life = 10;
@@ -229,10 +236,16 @@ class FruitSlasherGameState extends GameState<FruitSlasherGame> {
         guests.forEach((guest) {
           if (frt.isCollidingBlade(guest)) {
             frt.destroy();
-            if (frt.type == "bomb")
+            if (frt.type == "bomb"){
+              AudioManager.getInstance().playEffect("beep1.mp3");
               guest.life -= 1;
-            if (frt.type == "banana")
+            }
+
+            if (frt.type == "banana"){
+              AudioManager.getInstance().playEffect("hit.wav");
               guest.score += 1;
+            }
+
           }
         });
         if (g!=null) guests.remove(g);
@@ -246,10 +259,15 @@ class FruitSlasherGameState extends GameState<FruitSlasherGame> {
         if (frt.isCollidingBlade(player)) {
           frt.destroy();
 
-          if (frt.type == "bomb")
+          if (frt.type == "bomb"){
+            AudioManager.getInstance().playEffect("beep1.mp3");
             player.life -= 1;
-          if (frt.type == "banana")
+          }
+
+          if (frt.type == "banana"){
+            AudioManager.getInstance().playEffect("hit.wav");
             player.score += 1;
+          }
           send(new LifeRequest(player.life));
           if (player.life <= 0) {
             player.life = 10;
@@ -272,20 +290,22 @@ class FruitSlasherGameState extends GameState<FruitSlasherGame> {
     var msg = "";
     if (GameManager.instance!.gameMode == GameMode.Solo){
       winner = "ia";
-      msg = "you loosed with "+player.score.toString() +" fruits eaten, battle is over for you\n" + "winner is " + winner ;
+      msg = "you loosed with "+player.score.toString() +" fruits cut, battle is over for you\n" + "winner is " + winner ;
     }
     else{
       winner = "friends";
       msg =" wait until the end of the battle ! ";
     }
     this.stop();
+    AudioManager.getInstance().playMusic("loose.mp3");
     goToWaitMenu(false, msg);
   }
 
   onWin() {
     winner = GameManager.instance!.getMyID();
     this.stop();
-    goToWaitMenu(true, "you won the battle with "+player.score.toString() +" fruits eaten ! ");
+    AudioManager.getInstance().playMusic("win.mp3");
+    goToWaitMenu(true, "you won the battle with "+player.score.toString() +" fruits cut! ");
   }
 
 }

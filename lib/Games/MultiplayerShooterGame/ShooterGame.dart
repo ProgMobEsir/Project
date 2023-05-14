@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:wifi_direct_json/GameEngine/Vector2D.dart';
 import 'package:wifi_direct_json/Games/MultiplayerShooterGame/LifeBar.dart';
 import 'package:wifi_direct_json/Games/MultiplayerShooterGame/playerTag.dart';
 import 'package:wifi_direct_json/Utils/GameMods.dart';
@@ -122,6 +119,7 @@ class ShooterGameState extends GameState<ShooterGame> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               this.stop();
+              AudioManager.getInstance().stop();
               NavigationService.instance.navigateToReplacement("GAMES");
             },
           ),
@@ -171,6 +169,7 @@ class ShooterGameState extends GameState<ShooterGame> {
   List<PlayerTag> tags = [];
   List<LifeBar> lbars = [];
   shoot() {
+    AudioManager.getInstance().playEffect("throw.wav");
     player.shoot();
     send(ShootRequest(player.aimx, player.aimy));
   }
@@ -318,12 +317,14 @@ class ShooterGameState extends GameState<ShooterGame> {
       msg =" wait until the end of the battle ! ";
     }
     this.stop();
+    AudioManager.getInstance().playMusic("loose.mp3");
     goToWaitMenu(false, msg);
   }
 
   onWin() {
     winner = GameManager.instance!.getMyID();
     this.stop();
+    AudioManager.getInstance().playMusic("win.mp3");
     goToWaitMenu(true, "you won the battle ! ");
   }
 

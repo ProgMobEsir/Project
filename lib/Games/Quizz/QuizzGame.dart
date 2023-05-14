@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:wifi_direct_json/Utils/AudioManager.dart';
 import 'package:wifi_direct_json/Utils/GameMods.dart';
@@ -9,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/Utils/Requests/QuizzEndRequest.dart';
 import '../../Utils/GameManager.dart';
 import '../../Utils/Requests/JsonRequest.dart';
-import '../../Utils/Requests/WinRequest.dart';
 import '../../navigation/NavigationService.dart';
 import '../GameState.dart';
 
@@ -94,6 +91,7 @@ class QuizzGameState extends GameState<QuizzGame> {
             IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
+                AudioManager.getInstance().stop();
                 NavigationService.instance.navigateToReplacement("GAMES");
               },
             ),
@@ -195,6 +193,9 @@ class QuizzGameState extends GameState<QuizzGame> {
     answered = true;
     if (button == rightAnswer) {
       nbCorrect++;
+      AudioManager.getInstance().playEffect("powerup.mp3");
+    }else{
+      AudioManager.getInstance().playEffect("beep1.mp3");
     }
   }
 
@@ -234,10 +235,13 @@ class QuizzGameState extends GameState<QuizzGame> {
       if (GameManager.instance!.wifiP2PInfo!.isGroupOwner == true) {
         if (otherHasFinished) {
           if (nbCorrect > otherNbCorrect) {
+            AudioManager.getInstance().playMusic("win.mp3");
             onWin();
           } else if (nbCorrect < otherNbCorrect) {
+            AudioManager.getInstance().playMusic("loose.mp3");
             onLoose();
           } else {
+            AudioManager.getInstance().playMusic("win.mp3");
             onTie();
           }
         }
@@ -248,12 +252,15 @@ class QuizzGameState extends GameState<QuizzGame> {
   onSoloWin() {
     winner = GameManager.instance!.getMyID();
     this.stop();
+    AudioManager.getInstance().playMusic("win.mp3");
     goToWaitMenu(true, "you guessed " + nbCorrect.toString() + " questions ! ");
+
   }
 
   onWin() {
     winner = GameManager.instance!.getMyID();
     this.stop();
+    AudioManager.getInstance().playMusic("win.mp3");
     dispatchOnEnd(false);
   }
 

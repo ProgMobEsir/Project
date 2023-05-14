@@ -18,7 +18,7 @@ class TournamentManager {
     var tmp = [];
     var random = new Random();
     while (tmp.length < nb) {
-      var randomGame = random.nextInt(5);
+      var randomGame = random.nextInt(6);
       if (!tmp.contains(randomGame)) {
         print(randomGame);
         tmp.add(randomGame);
@@ -26,7 +26,6 @@ class TournamentManager {
     }
     for (int g in tmp){
       games.add(GameManager.instance!.gameList[g]);
-
     }
     NextGame();
 

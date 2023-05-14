@@ -41,7 +41,6 @@ class GameState<T extends StatefulWidget> extends State<T>
   @override
   void dispose() {
     super.dispose();
-    AudioManager.getInstance().stop();
     stop();
     print("unsubscribed");
   }
