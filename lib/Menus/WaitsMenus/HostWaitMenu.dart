@@ -54,7 +54,6 @@ class _HostWaitMenuState extends State<HostWaitMenu>
 
                 if(GameManager.instance!.gameMode == GameMode.Multi && GameManager.instance!.wifiP2PInfo!.isGroupOwner){
 
-                  GameManager.instance!.manageScores();
                   GameManager.instance!.sendPlayers();
                 }
                 if (GameManager.instance!.tournamentManager.running)

@@ -19,11 +19,16 @@ class GameState<T extends StatefulWidget> extends State<T>
   late Timer timer;
   bool run = true;
   int frames = 0;
+
   void stop() {
     run = false;
     GameManager.instance!.unsubscribe(this);
     timer.cancel();
     this.engine!.stop();
+    GameManager.instance!.fileManager.loadScoresToGameManager();
+    if(GameManager.instance!.wifiP2PInfo?.isGroupOwner == true)
+      send(new ScoreRequest(GameManager.instance!.scores));
+
   }
 
   @override
@@ -75,6 +80,7 @@ class GameState<T extends StatefulWidget> extends State<T>
 
   void goToWaitMenu(bool win, String message) {
     GameManager.instance!.lastWinner = winner;
+    GameManager.instance!.fileManager.setScoreForPlayer(winner, 1);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -87,6 +93,7 @@ class GameState<T extends StatefulWidget> extends State<T>
   }
 
   dispatchOnEnd(bool hostIsLoosing) {
+
     if (GameManager.instance!.wifiP2PInfo?.isGroupOwner == true) {
       if (hostIsLoosing) {
         // pour chaques joueurs dans la liste des joueurs si le joueur n'est pas le joueur actuel alors on +=1
@@ -94,19 +101,15 @@ class GameState<T extends StatefulWidget> extends State<T>
         for (var i = 0; i < GameManager.instance!.players.length; i++) {
           if (GameManager.instance!.players[i] !=
               GameManager.instance!.getMyID()) {
-            GameManager.instance!.scores[GameManager.instance!.players[i]] += 1;
-            GameManager.instance!
-                .setLastWinner(GameManager.instance!.players[i]);
+            GameManager.instance!.fileManager.setScoreForPlayer(GameManager.instance!.players[i], 1);
+            GameManager.instance!.setLastWinner(GameManager.instance!.players[i]);
           }
         }
       } else {
-        GameManager.instance!.setLastWinner(winner);
-        GameManager.instance!.scores[winner] += 1;
+        GameManager.instance!.fileManager.setScoreForPlayer(winner, 1);
       }
       //set the new score
-
-      send(new ScoreRequest(GameManager.instance!.scores));
-
+      GameManager.instance!.fileManager.loadScoresToGameManager();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

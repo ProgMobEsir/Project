@@ -4,6 +4,7 @@ import 'package:wifi_direct_json/navigation/NavigationService.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../Utils/AudioManager.dart';
 import '../Utils/GameManager.dart';
+import '../Utils/styles.dart';
 
 class SettingsMenu extends StatefulWidget {
   const SettingsMenu({super.key});
@@ -49,6 +50,7 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.amber.shade100,
       appBar: AppBar(
         backgroundColor: Colors.amber,
         //add a button to the home page :
@@ -64,9 +66,19 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
       ),
       body:  SingleChildScrollView(
     child:Center(
-        child: Column(
+        child: Padding(padding: EdgeInsets.all(20),
+          child:Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(
+              'Customize you app',
+              //generate a line to add padding to the text
+              style: TextStyle(
+                fontSize: 30,
+
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const Padding(padding: EdgeInsets.all(20)),
             Text('Permissions'),
             ElevatedButton(onPressed: (){
@@ -77,18 +89,10 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
               thickness: 2,
               color: Colors.grey,
             ),
-            Text(
-              'Customize you app !',
-              //generate a line to add padding to the text
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            //la on met du padding
             Padding(padding: EdgeInsets.all(20)),
-            //et la un bouton de play
             Text('Effects volume'),
             Slider(
+              activeColor: Colors.blue.shade200,
               value: effectSliderValue,
               max: 1,
               divisions: 100,
@@ -97,11 +101,13 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
                 setState(() {
                   effectSliderValue = value;
                   AudioManager.getInstance().setEffectVolume(value);
+
                 });
               },
             ),
             Text('Music volume'),
             Slider(
+              activeColor: Colors.red.shade200,
               value: musicSliderValue,
               max: 1,
               divisions: 100,
@@ -120,18 +126,25 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
             ),
             Padding(padding: EdgeInsets.all(20)),
             const Text(
-              'Enter your name ',
+              'Set your name !',
               //generate a line to add padding to the text
               style: TextStyle(
                 fontSize: 20,
               ),
             ),
+            Padding(padding: EdgeInsets.all(2)),
             TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Name',
+              ),
               controller: myController,
             ),
 
             ElevatedButton(
+              style: Style.getBtnStyleROUNDED(Colors.deepOrangeAccent),
                 onPressed: () {
+                  GameManager.instance!.fileManager.setScoreForPlayer(myController.text,0);
                   GameManager.instance!.playerName = myController.text;
                 },
                 child: Text('Set your name')),
@@ -168,6 +181,7 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
                   .toList(),
             ),
             ElevatedButton(
+              style: Style.getBtnStyleROUNDED(Colors.deepOrangeAccent),
               onPressed: () {
                 GameManager.instance!.playerColor = _selectedColor;
               },
@@ -180,7 +194,7 @@ class SettingMenuState extends State<SettingsMenu> with WidgetsBindingObserver {
 
           ],
         ),
-      ),),
+      ),),),
 
     );
   }

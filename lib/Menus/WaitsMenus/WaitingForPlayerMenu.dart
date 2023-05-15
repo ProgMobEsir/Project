@@ -33,14 +33,13 @@ class _WaitingForPlayerMenuState extends State<WaitingForPlayerMenu>
               onPressed: () {
                 setState(() {});
 
-                GameManager.instance!.manageScores();
               },
               child: const Text('ReloadPlayerList'),
             ),
             ElevatedButton(
               onPressed: () {
                 NavigationService.instance.navigateToReplacement('GAMES');
-                GameManager.instance!.manageScores();
+
                 GameManager.instance!.sendPlayers();
               },
               child: const Text('Start'),

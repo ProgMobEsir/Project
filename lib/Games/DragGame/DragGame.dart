@@ -263,6 +263,7 @@ class DragGameState extends GameState<DragGame> {
     player.foodEaten = 0;
     guest.foodEaten = 0;
     this.stop();
+    GameManager.instance!.fileManager.addScoreToHost(1);
     AudioManager.getInstance().playMusic("win.mp3");
     goToWaitMenu(true, "you won in  " + 0.toString() + " seconds");
   }

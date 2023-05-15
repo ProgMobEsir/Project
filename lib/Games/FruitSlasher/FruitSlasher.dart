@@ -305,6 +305,7 @@ class FruitSlasherGameState extends GameState<FruitSlasherGame> {
     winner = GameManager.instance!.getMyID();
     this.stop();
     AudioManager.getInstance().playMusic("win.mp3");
+    GameManager.instance!.fileManager.addScoreToHost(1);
     goToWaitMenu(true, "you won the battle with "+player.score.toString() +" fruits cut! ");
   }
 

@@ -17,8 +17,7 @@ class _NamingMenuState extends State<NamingMenu> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    GameManager.instance!.resetPlayers();
-    GameManager.instance!.manageScores();
+
   }
 
   @override
@@ -45,6 +44,7 @@ class _NamingMenuState extends State<NamingMenu> with WidgetsBindingObserver {
             ),
             ElevatedButton(
                 onPressed: () {
+
                   GameManager.instance!.playerName = myController.text;
 
                   if (GameManager.instance?.wifiP2PInfo?.isGroupOwner == true) {
@@ -61,6 +61,7 @@ class _NamingMenuState extends State<NamingMenu> with WidgetsBindingObserver {
                   }
                 },
                 child: Text('Choose')),
+
           ],
         ),
       ),

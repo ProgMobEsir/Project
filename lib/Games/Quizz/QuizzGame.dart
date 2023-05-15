@@ -252,6 +252,7 @@ class QuizzGameState extends GameState<QuizzGame> {
   onSoloWin() {
     winner = GameManager.instance!.getMyID();
     this.stop();
+    GameManager.instance!.fileManager.addScoreToHost(nbCorrect);
     AudioManager.getInstance().playMusic("win.mp3");
     goToWaitMenu(true, "you guessed " + nbCorrect.toString() + " questions ! ");
 
@@ -260,6 +261,7 @@ class QuizzGameState extends GameState<QuizzGame> {
   onWin() {
     winner = GameManager.instance!.getMyID();
     this.stop();
+    GameManager.instance!.fileManager.addScoreToHost(nbCorrect);
     AudioManager.getInstance().playMusic("win.mp3");
     dispatchOnEnd(false);
   }

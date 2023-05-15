@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/Games/Accel/AccelGame.dart';
 import 'package:wifi_direct_json/Games/DragGame/DragGame.dart';
@@ -10,7 +9,6 @@ import '../Games/MultiplayerShooterGame/ShooterGame.dart';
 import '../Utils/Requests/JsonRequest.dart';
 import 'HomePage.dart';
 import 'package:wifi_direct_json/Games/SimonGame/SuperSimon.dart';
-
 import '/Utils/GameManager.dart';
 
 class GameMenu extends StatefulWidget {
@@ -25,15 +23,13 @@ class GameMenuState extends State<GameMenu> with WidgetsBindingObserver {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor: Colors.blueGrey,
         //add a button to the home page :
         actions: [
           IconButton(

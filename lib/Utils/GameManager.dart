@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:wifi_direct_json/Utils/Requests/JsonRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/NewPeerNameRequest.dart';
 import 'package:wifi_direct_json/Utils/Requests/PlayersRequest.dart';
@@ -8,6 +9,7 @@ import 'package:wifi_direct_json/Utils/TournamentManager.dart';
 import '../navigation/NavigationService.dart';
 import '/Utils/Reciever.dart';
 import '/Utils/GameMods.dart';
+import 'FileManager.dart';
 
 class GameManager {
 
@@ -21,6 +23,12 @@ class GameManager {
   ];
 
   TournamentManager tournamentManager = TournamentManager();
+
+
+
+  FileManager fileManager = FileManager();
+
+
 
   var lastWinner = "";
   var playerName = "You";
@@ -43,6 +51,11 @@ class GameManager {
   FlutterP2pConnection get flutterP2pConnectionPlugin =>
       _flutterP2pConnectionPlugin;
 
+  static Future<String> getAppDirectory() async {
+    return (await getApplicationDocumentsDirectory()).path;
+  }
+
+
   static GameManager? _instance;
   //table of all the subscribers
   List<Reciever> subscribers = [];
@@ -54,6 +67,20 @@ class GameManager {
     }
     return _instance;
   }
+
+  void addPlayer(String name){
+    players.add(name);
+  }
+
+  void addAPointToPlayer(String name){
+    if(scores.containsKey(name)){
+      scores[name] = scores[name] + 1;
+    }
+    else{
+      scores[name] = 1;
+    }
+  }
+
 
   Color getPlayerColor(){
     return playerColor;
@@ -120,6 +147,9 @@ class GameManager {
 
     else if (jsonReq.type == "scores") {
       scores = jsonReq.getScoreRequest().scores;
+      for (var player in scores.keys) {
+        fileManager.setScoreForPlayer(player, scores[player]);
+      }
     }
 
     else if (jsonReq.type == "players") {
@@ -135,7 +165,7 @@ class GameManager {
     }
   }
 
-  void manageScores() {
+  void resetScores() {
     scores = {};
     for (var player in players) {
       scores[player] = 0;
@@ -156,6 +186,7 @@ class GameManager {
   }
 
   void init() async {
+    fileManager.setScoreForPlayer("You",0);
     await _flutterP2pConnectionPlugin.initialize();
     await _flutterP2pConnectionPlugin.register();
     _streamWifiInfo =

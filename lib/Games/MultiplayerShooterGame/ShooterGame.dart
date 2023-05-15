@@ -324,6 +324,7 @@ class ShooterGameState extends GameState<ShooterGame> {
   onWin() {
     winner = GameManager.instance!.getMyID();
     this.stop();
+    GameManager.instance!.fileManager.addScoreToHost(1);
     AudioManager.getInstance().playMusic("win.mp3");
     goToWaitMenu(true, "you won the battle ! ");
   }

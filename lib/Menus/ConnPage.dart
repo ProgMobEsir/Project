@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Utils/styles.dart';
 import 'ClientMenu.dart';
 import 'HostMenu.dart';
 import 'HomePage.dart';
@@ -50,8 +51,9 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.amber.shade100,
         appBar: AppBar(
-          backgroundColor: Colors.amber,
+          backgroundColor: Colors.blueGrey,
           //add a button to the home page :
           actions: [
             IconButton(
@@ -71,45 +73,24 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
         //add padding to the left of this box
 
         body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
+              child: Padding(
+    padding: EdgeInsets.all(10),
+    child:Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(padding: const EdgeInsets.only(top: 20)),
-
                   const SizedBox(height: 10),
                   Padding(padding: const EdgeInsets.only(top: 20)),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ClientMenu(),
-                        ),
-                      );
-                    },
-                    child: const Text("Play as a guest"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HostMenu(),
-                        ),
-                      );
-                    },
-                    child: const Text("Play as Host"),
-                  ),
+                  DetailedCard(MenuName: "HOST", Title: "Be The Host", subTitle: "Create a game room for the other to join", BgColor1: Colors.pink, BgColor2: Colors.pink.shade50),
+
                   Padding(padding: const EdgeInsets.only(top: 20)),
+                  DetailedCard(MenuName: "CLIENT", Title: "Be a guest", subTitle: "Join a game room already created by a host", BgColor1: Colors.pink.shade50, BgColor2: Colors.pink),
+
                 ],
               ),
-            ),
-          ),
+
+              ),
         ));
   }
 }

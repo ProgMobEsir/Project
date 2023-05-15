@@ -37,6 +37,7 @@ dependencies:
   flutter_sensors: ^1.0.1
   just_audio: ^0.9.13
   sensors_plus: ^3.0.0
+  path_provider: ^2.0.11
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 flutter_test:

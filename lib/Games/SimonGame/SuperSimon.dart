@@ -227,12 +227,20 @@ class SuperSimonState extends GameState<SuperSimon> {
     }
   }
 
+  void cancelTimers(){
+    for (var i = 0; i < seqTimers.length; i++) {
+      if (seqTimers[i].isActive) {
+        seqTimers[i].cancel();
+      }
+    }
+  }
+
   var textSeq = "";
-  var seqTimer;
+  List<Timer> seqTimers = [];
   playSequence() {
     for (var i = 0; i <= sequence.length; i++) {
-      seqTimer = Timer(Duration(seconds: i), () {
-        if (i < sequence.length && seqTimer.isActive) {
+      seqTimers.add(Timer(Duration(seconds: i), () {
+        if (i < sequence.length ) {
           textSeq = sequence[i];
 
           AudioManager.getInstance().playEffect("beep" + sequence[i] + ".mp3");
@@ -246,7 +254,7 @@ class SuperSimonState extends GameState<SuperSimon> {
             currentSequence = -1;
           });
         }
-      });
+      }));
     }
   }
 
@@ -259,7 +267,7 @@ class SuperSimonState extends GameState<SuperSimon> {
   }
 
   onSoloLoose() {
-    seqTimer.cancel();
+    cancelTimers();
     this.stop();
     winner = "IA";
     AudioManager.getInstance().playMusic("loose.mp3");
@@ -267,30 +275,29 @@ class SuperSimonState extends GameState<SuperSimon> {
   }
 
   onSoloWin() {
-    seqTimer.cancel();
+    cancelTimers();
     winner = GameManager.instance!.getMyID();
+    GameManager.instance!.fileManager.addScoreToHost(1);
     this.stop();
     AudioManager.getInstance().playMusic("win.mp3");
     goToWaitMenu(true, "you played " + nbTurns.toString() + " turns");
   }
 
   onWin() {
-    seqTimer.cancel();
+    cancelTimers();
     this.stop();
     send(new WinRequest(true));
+    GameManager.instance!.fileManager.addScoreToHost(1);
     AudioManager.getInstance().playMusic("win.mp3");
     dispatchOnEnd(false);
-
-
   }
 
   onLoose() {
     winner = "ALL";
-    seqTimer.cancel();
+    cancelTimers();
     this.stop();
     send(new WinRequest(false));
     AudioManager.getInstance().playMusic("loose.mp3");
     dispatchOnEnd(true);
-
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
-import '../Utils/AudioManager.dart';
 import '../Utils/GameManager.dart';
+import '../Utils/styles.dart';
 
 class GameTourMenu extends StatefulWidget {
   const GameTourMenu({super.key});
@@ -26,8 +26,9 @@ class GameTourMenuState extends State<GameTourMenu> with WidgetsBindingObserver 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.amber.shade100,
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor:Colors.white.withOpacity(0.5),
         //add a button to the home page :
         actions: [
           IconButton(
@@ -43,17 +44,17 @@ class GameTourMenuState extends State<GameTourMenu> with WidgetsBindingObserver 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Select the number of game you want in your tournament ! ',
-              //generate a line to add padding to the text
+             Text(
+              "You will play " + numberOfGames.toString() + " games",
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            //la on met du padding
-            const Padding(padding: EdgeInsets.all(100)),
-            //et la un bouton de play
+
             Slider(
+              activeColor: Colors.purple,
               value: numberOfGames.toDouble(),
               max:6,
               min:2,
@@ -65,10 +66,15 @@ class GameTourMenuState extends State<GameTourMenu> with WidgetsBindingObserver 
                 });
               },
             ),
-            ElevatedButton(onPressed: (){
+            const Padding(padding: EdgeInsets.all(50)),
+            ElevatedButton(
+                style: Style.getBtnStyleROUNDED(Colors.purple.shade200),
+                onPressed: (){
+              
               GameManager.instance!.getTournamentManager().init(numberOfGames);
               print("tournament started");
-            }, child: Text('Start the tournament !'))
+            }, child: Padding(padding: EdgeInsets.all(10),
+            child:Text('Start the tournament !'))),
           ],
         ),
       ),

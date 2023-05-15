@@ -28,6 +28,7 @@ class AccelGameState extends GameState<AccelGame> {
   List<double>? _gyroscopeValues = [0.0, 0.0, 0.0];
   List<double>? _magnetometerValues = [0.0, 0.0, 0.0];
   final _streamSubscriptions = <StreamSubscription<dynamic>>[];
+  var startTime = 0;
 
   initSensors(){
     _streamSubscriptions.add(
@@ -77,6 +78,7 @@ class AccelGameState extends GameState<AccelGame> {
     ]);
     initGame();
     initSensors();
+    startTime = getTimeInMilliseconds();
   }
 
   @override
@@ -191,6 +193,7 @@ class AccelGameState extends GameState<AccelGame> {
   onWin() {
     this.stop();
     dispatchOnEnd(false);
+    GameManager.instance!.fileManager.addScoreToHost(1);
     send(new WinRequest(true));
     AudioManager.getInstance().playMusic("win.mp3");
   }
@@ -220,7 +223,14 @@ class AccelGameState extends GameState<AccelGame> {
 
   onSoloWin() {
     this.stop();
+    GameManager.instance!.fileManager.addScoreToHost(1);
     AudioManager.getInstance().playMusic("win.mp3");
-    goToWaitMenu(true, "you won in " + 0.toString() + " seconds");
+    goToWaitMenu(true, "you won in " + ((getTimeInMilliseconds() - startTime )/1000).toString() + " seconds");
+  }
+
+  int getTimeInMilliseconds() {
+    DateTime now = DateTime.now();
+    int milliseconds = now.millisecondsSinceEpoch;
+    return milliseconds;
   }
 }

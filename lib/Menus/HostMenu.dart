@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/Menus/NamingMenu.dart';
 import '../Utils/Requests/JsonRequest.dart';
 import 'ConnPage.dart';
-
 import '/Utils/GameManager.dart';
 
 class HostMenu extends StatefulWidget {
@@ -17,7 +16,7 @@ class HostMenuState extends State<HostMenu> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor:Colors.white.withOpacity(0.5),
         //add a button to the home page :
         actions: [
           IconButton(
