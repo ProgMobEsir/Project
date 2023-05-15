@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
 import '../../Utils/GameMods.dart';
+import '../../Utils/styles.dart';
 import '/Utils/GameManager.dart';
 
 class HostWaitMenu extends StatefulWidget {
@@ -18,6 +19,7 @@ class _HostWaitMenuState extends State<HostWaitMenu>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.amber.shade100,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -50,6 +52,7 @@ class _HostWaitMenuState extends State<HostWaitMenu>
               textAlign: TextAlign.center,
             ),
             ElevatedButton(
+              style: Style.getBtnStyleROUNDED(Colors.green),
               onPressed: () {
 
                 if(GameManager.instance!.gameMode == GameMode.Multi && GameManager.instance!.wifiP2PInfo!.isGroupOwner){
@@ -73,12 +76,10 @@ class _HostWaitMenuState extends State<HostWaitMenu>
             ),
             if (GameManager.instance!.tournamentManager.running)
               ElevatedButton(
+                style: Style.getBtnStyleROUNDED(Colors.purple),
                 onPressed: () {
                   GameManager.instance!.tournamentManager.stopTournament();
                 },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.purple),
-                ),
                 child: const Text('Exit Tournament'),
               ),
           ],

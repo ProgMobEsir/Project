@@ -28,7 +28,11 @@ class _NamingMenuState extends State<NamingMenu> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      backgroundColor: Colors.amber.shade100,
+      body: Center(child:
+        Padding(
+        padding: const EdgeInsets.all(8.0),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -39,8 +43,13 @@ class _NamingMenuState extends State<NamingMenu> with WidgetsBindingObserver {
                 fontSize: 20,
               ),
             ),
+            Padding(padding: EdgeInsets.all(8.0)),
             TextField(
               controller: myController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Name',
+              ),
             ),
             ElevatedButton(
                 onPressed: () {
@@ -64,7 +73,7 @@ class _NamingMenuState extends State<NamingMenu> with WidgetsBindingObserver {
 
           ],
         ),
-      ),
+      ),),
     );
   }
 }

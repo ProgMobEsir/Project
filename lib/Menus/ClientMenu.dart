@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Utils/styles.dart';
 import 'ConnPage.dart';
 import '/Utils/GameManager.dart';
 
@@ -13,6 +14,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.amber.shade100,
       appBar: AppBar(
         backgroundColor: Colors.amber,
         //add a button to the home page :
@@ -57,9 +59,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
                 ),
               ),
               ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.orange),
-                ),
+                style: Style.getBtnStyleROUNDED(Colors.deepOrangeAccent),
                 onPressed: () async {
                   setState(() {});
                 },
@@ -152,9 +152,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
               //la on met du padding
               const Padding(padding: EdgeInsets.all(20)),
               ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.red),
-                ),
+                style: Style.getBtnStyleROUNDED(Colors.red),
                 onPressed: () async {
                   setState(() {});
                   bool? removed = await GameManager
@@ -165,6 +163,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
                 child: const Text("Leave Group"),
               ),
               ElevatedButton(
+                style: Style.getBtnStyleROUNDED(Colors.blueGrey),
                 onPressed: () async {
                   setState(() {});
                   var info = await GameManager
@@ -198,6 +197,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
                 child: const Text("get group info"),
               ),
               ElevatedButton(
+                style: Style.getBtnStyleROUNDED(Colors.green.shade300),
                 onPressed: () async {
                   setState(() {});
                   bool? discovering = await GameManager
@@ -208,6 +208,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
                 child: const Text("Search room"),
               ),
               ElevatedButton(
+                style: Style.getBtnStyleROUNDED(Colors.red.shade100),
                 onPressed: () async {
                   setState(() {});
                   bool? stopped = await GameManager
@@ -218,6 +219,7 @@ class ClientMenuState extends State<ClientMenu> with WidgetsBindingObserver {
                 child: const Text("stop searching a room"),
               ),
               ElevatedButton(
+                style: Style.getBtnStyleROUNDED(Colors.green),
                 onPressed: () async {
                   setState(() {});
                   GameManager.instance!.connectToSocket();

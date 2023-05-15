@@ -115,6 +115,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               },
               child: const Text('Settings'),
             ),
+            if (GameManager.instance!.gameMode == GameMode.Multi && GameManager.instance!.wifiP2PInfo?.isGroupOwner == true)
+              ElevatedButton(
+                style: Style.getBtnStyleROUNDED(Colors.pink),
+                onPressed: () {
+                  NavigationService.instance.navigateToReplacement("GAMES");
+                },
+                child: const Text('Continue your multiplayer game'),
+              ),
           ],
         ),
       ),

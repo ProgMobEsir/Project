@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wifi_direct_json/navigation/NavigationService.dart';
+import '../Utils/styles.dart';
 import '/Utils/GameManager.dart';
 
 class TournamentEndMenu extends StatefulWidget {
@@ -14,6 +15,7 @@ class TournamentEndMenuState extends State<TournamentEndMenu>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.amber.shade100,
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -62,6 +64,7 @@ class TournamentEndMenuState extends State<TournamentEndMenu>
                 textAlign: TextAlign.center,
               ),
               ElevatedButton(
+                style : Style.getBtnStyleROUNDED(Colors.blueGrey),
                 onPressed: () {
                   NavigationService.instance.navigateToReplacement('GAMES');
                 },

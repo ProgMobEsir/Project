@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Utils/GameMods.dart';
 import '../Utils/styles.dart';
 import 'ClientMenu.dart';
 import 'HostMenu.dart';
@@ -86,11 +87,17 @@ class ConnPageState extends State<ConnPage> with WidgetsBindingObserver {
 
                   Padding(padding: const EdgeInsets.only(top: 20)),
                   DetailedCard(MenuName: "CLIENT", Title: "Be a guest", subTitle: "Join a game room already created by a host", BgColor1: Colors.pink.shade50, BgColor2: Colors.pink),
+                  if (GameManager.instance!.gameMode == GameMode.Multi && GameManager.instance!.wifiP2PInfo?.isGroupOwner == true)
+                    DetailedCard(MenuName: "GAMES", Title: "Continue", subTitle: "continue the current multiplayer game !", BgColor1: Colors.green.shade50, BgColor2: Colors.green),
+
 
                 ],
               ),
 
               ),
-        ));
+
+        ),
+
+    );
   }
 }
