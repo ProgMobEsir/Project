@@ -1,16 +1,39 @@
-# wifi_direct_json
+# Peer games
+A flutter app using wifi peer to peer to play multiplayer games
 
-A new Flutter project.
+# Release
 
-## Getting Started
+[Release](https://github.com/ProgMobEsir/Project/releases/tag/StableRelease)
 
-This project is a starting point for a Flutter application.
+# Design
 
-A few resources to get you started if this is your first Flutter project:
+## Game Engine
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+A built in game engine able comming with colliders and renderer for images and simple shapes.
+It can be used by creating a game object and adding it to the engine
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+## Menus
+A menu contains buttons and will redirect
+
+## GameManager
+The game manager keeps the state of the app, and manage the peer to peer behaviour of the app
+
+## Navigation Service
+
+Navigation service permit to navigate without context in the app
+
+# Usage
+
+## Connect two devices 
+
+1) select multiplayer on both devices
+2) select host on a device and guest on another
+3) on the host device, open a game room
+4) on the guest device, search for a room and refresh the list until you found the other device.
+5) select this device and click connect
+6) on the host device, open the room
+7) on the guest device, connect to the room
+8) then on the host device, start the game
+
+After that, the both devices will display a naming menu to name the player in multiplayer games
